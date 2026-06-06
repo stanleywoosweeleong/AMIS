@@ -3320,7 +3320,7 @@ input[type="number"] {
                 <div class="picker-crop-grid" id="pickerCropGrid"></div>
               </div>
 
-              <input type="text" class="picker-other-input" id="pickerCropOther" data-i18n-placeholder="advisor.picker.cropOther" placeholder="Type your crop name..." style="display:none" oninput="updatePickerPreview()">
+              <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" class="picker-other-input" id="pickerCropOther" data-i18n-placeholder="advisor.picker.cropOther" placeholder="Type your crop name..." style="display:none" oninput="updatePickerPreview()">
             </div>
 
             <div class="picker-section">
@@ -4081,7 +4081,7 @@ input[type="number"] {
       <div id="tmLibraryPicker">
         <div style="display:flex; gap:6px; margin-bottom:6px">
           <input type="text" id="tmSearch" data-i18n-placeholder="tankmix.search.placeholder" placeholder="Search microbe by name, function, or genus…"
-            oninput="renderTankMixSearch()"
+            oninput="renderTankMixSearch()" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
             style="flex:1; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-family:inherit; background:var(--surface); color:var(--text); outline:none"
             onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
         </div>
@@ -4240,7 +4240,7 @@ input[type="number"] {
 
         <!-- FRAC panel -->
         <div id="tmCustomPanel_pesticide_frac">
-          <input type="text" id="tmCustomFracName" data-i18n-placeholder="tankmix.custom.frac.placeholder" placeholder="Product name (optional, e.g. Cuprosan, Curzate Super)"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomFracName" data-i18n-placeholder="tankmix.custom.frac.placeholder" placeholder="Product name (optional, e.g. Cuprosan, Curzate Super)"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <select id="tmCustomFracCode" onchange="updateCustomCodeHint('frac')"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
@@ -4264,7 +4264,7 @@ input[type="number"] {
 
         <!-- IRAC panel -->
         <div id="tmCustomPanel_pesticide_irac" style="display:none">
-          <input type="text" id="tmCustomIracName" data-i18n-placeholder="tankmix.custom.irac.placeholder" placeholder="Product name (optional, e.g. Voliam Targo)"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomIracName" data-i18n-placeholder="tankmix.custom.irac.placeholder" placeholder="Product name (optional, e.g. Voliam Targo)"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <select id="tmCustomIracCode" onchange="updateCustomCodeHint('irac')"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
@@ -4287,7 +4287,7 @@ input[type="number"] {
 
         <!-- HRAC panel -->
         <div id="tmCustomPanel_pesticide_hrac" style="display:none">
-          <input type="text" id="tmCustomHracName" data-i18n-placeholder="tankmix.custom.hrac.placeholder" placeholder="Product name (optional)"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomHracName" data-i18n-placeholder="tankmix.custom.hrac.placeholder" placeholder="Product name (optional)"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <select id="tmCustomHracCode" onchange="updateCustomCodeHint('hrac')"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
@@ -4310,7 +4310,7 @@ input[type="number"] {
 
         <!-- Fertilizer panel -->
         <div id="tmCustomPanel_fertilizer" style="display:none">
-          <input type="text" id="tmCustomFertName" data-i18n-placeholder="tankmix.custom.fert.placeholder" placeholder="Product name (e.g. NPK 12-12-17+TE)"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomFertName" data-i18n-placeholder="tankmix.custom.fert.placeholder" placeholder="Product name (e.g. NPK 12-12-17+TE)"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <div style="display:flex; gap:6px; margin-bottom:6px">
             <select id="tmCustomFertElement"
@@ -4331,7 +4331,7 @@ input[type="number"] {
 
         <!-- Adjuvant panel -->
         <div id="tmCustomPanel_adjuvant" style="display:none">
-          <input type="text" id="tmCustomAdjName" data-i18n-placeholder="tankmix.custom.adj.placeholder" placeholder="Product name (e.g. Tween 20, sticker oil)"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomAdjName" data-i18n-placeholder="tankmix.custom.adj.placeholder" placeholder="Product name (e.g. Tween 20, sticker oil)"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <select id="tmCustomAdjType"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
@@ -4350,7 +4350,7 @@ input[type="number"] {
 
         <!-- "I do not know" panel -->
         <div id="tmCustomPanel_other" style="display:none">
-          <input type="text" id="tmCustomOtherName" data-i18n-placeholder="tankmix.custom.other.placeholder" placeholder="Product name"
+          <input type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" id="tmCustomOtherName" data-i18n-placeholder="tankmix.custom.other.placeholder" placeholder="Product name"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
           <select id="tmCustomOtherCategory"
             style="width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:6px; font-size:12px; font-family:inherit; background:var(--surface); color:var(--text); outline:none; margin-bottom:6px; box-sizing:border-box">
