@@ -30,7 +30,7 @@
  * you can tell at a glance how old a deployed cache is.
  */
 
-const CACHE_VERSION = 'amis-2026-06-06b';
+const CACHE_VERSION = 'amis-2026-06-06c';
 const CACHE_NAME = `amis-cache-${CACHE_VERSION}`;
 
 // Files to pre-cache on install. Relative URLs so the SW works regardless
