@@ -24,9 +24,13 @@
  * invalidates the old cache so users definitely get fresh content. The
  * service worker also detects content changes automatically (via response
  * comparison), so the version bump is belt-and-braces.
+ *
+ * Version scheme: 'amis-YYYY-MM-DD' + a trailing letter for multiple ships in
+ * one day (e.g. amis-2026-06-06a, then -06b). Date-based is self-documenting —
+ * you can tell at a glance how old a deployed cache is.
  */
 
-const CACHE_VERSION = 'amis-v1';
+const CACHE_VERSION = 'amis-2026-06-06a';
 const CACHE_NAME = `amis-cache-${CACHE_VERSION}`;
 
 // Files to pre-cache on install. Relative URLs so the SW works regardless

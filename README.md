@@ -5,29 +5,31 @@ deployed to an HTTPS server, users can install AMIS to their phone or desktop
 home screen, use it fully offline after the first load, and automatically
 receive update prompts when you ship a new version.
 
-## Two deployment modes — same `amis.html` works for both
+## Two deployment modes — same `index.html` works for both
 
-The `amis.html` in this folder is **dual-mode**:
+The `index.html` in this folder is **dual-mode**:
 
-- **Standalone** — upload just `amis.html` to any server (HTTP or HTTPS).
-  Works exactly like the original: aggressive no-cache headers, no install
-  prompt, no offline-reload capability, no update banners. The browser
-  silently logs 404s for `manifest.json` and `service-worker.js` (the
-  registration code handles this gracefully) but everything else functions
-  normally.
-- **Full PWA** — upload all 5 files (`amis.html`, `manifest.json`,
+- **Standalone** — upload just `index.html` to any server (HTTP or HTTPS).
+  Works like a plain web page: no install prompt, no offline-reload
+  capability, no update banners. The browser silently logs 404s for
+  `manifest.json` and `service-worker.js` (the registration code is
+  feature-gated and try/caught, so it degrades cleanly) but everything else
+  functions normally.
+- **Full PWA** — upload all 5 files (`index.html`, `manifest.json`,
   `service-worker.js`, `icon-192.png`, `icon-512.png`) to an HTTPS server.
   Get installable app, offline reloads, and auto-update notifications.
 
-When deployed as a full PWA, the service worker intercepts requests *before*
-the no-cache meta tags are consulted, so those tags have no effect. They're
-safe to keep in the file regardless of deployment mode.
+Note: the anti-cache `<meta>` tags from the original standalone build have
+been **removed** in this PWA version. They would conflict with the service
+worker's caching, and the SW handles freshness itself (stale-while-revalidate
+plus the update banner). If you deploy standalone and want the browser to
+always re-fetch, set cache headers at the server level instead.
 
 ## What's in this folder
 
 | File | Purpose |
 |---|---|
-| `amis.html` | The app. Patched with manifest link, apple-touch-icon link, and service-worker registration. Anti-cache meta tags removed. |
+| `index.html` | The app. Patched with manifest link, apple-touch-icon link, and service-worker registration. Anti-cache meta tags removed. |
 | `manifest.json` | PWA metadata — app name, icons, theme color, start URL, display mode (standalone). |
 | `service-worker.js` | Background script. Caches the app shell, serves it offline, detects updates, posts update notifications to the page. |
 | `icon-192.png` | 192×192 home-screen icon (Android, desktop browsers, iOS apple-touch-icon). |
@@ -38,7 +40,7 @@ All five files must be in the same folder and served from the same origin.
 ## Required: HTTPS
 
 Service workers only work over **HTTPS** or **localhost**. If you try to
-register the SW from `http://your-server.com/amis.html`, the browser will
+register the SW from `http://your-server.com/index.html`, the browser will
 silently refuse and the app will fall back to normal browser behaviour
 (works, but no offline, no install prompt, no auto-updates).
 
@@ -61,7 +63,7 @@ server. From this folder, run:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/amis.html` in Chrome. To verify the SW
+Then open `http://localhost:8000/index.html` in Chrome. To verify the SW
 registered:
 
 1. Open DevTools (F12)
@@ -92,7 +94,7 @@ parallel:
 
 1. **Serves the cached version instantly** — page loads in milliseconds,
    even with no signal.
-2. **Fetches a fresh copy of amis.html in the background** — and compares
+2. **Fetches a fresh copy of index.html in the background** — and compares
    it to what's in the cache.
 
 If the fresh copy is different, the SW saves it to the cache and posts a
@@ -105,16 +107,20 @@ have a working version of the app in the meantime.
 
 To push an update:
 
-1. Replace `amis.html` on your server with the new version.
+1. Replace `index.html` on your server with the new version.
 2. **Bump the cache version** in `service-worker.js`. Open the file, find
    this line near the top:
 
    ```js
-   const CACHE_VERSION = 'amis-v1';
+   const CACHE_VERSION = 'amis-2026-06-06a';
    ```
 
-   Change `'amis-v1'` to `'amis-v2'` (then v3, v4 for future releases).
-   This invalidates the old cache so users definitely get the fresh files.
+   Change it to today's date. The scheme is `amis-YYYY-MM-DD` plus a trailing
+   letter for multiple ships in one day — e.g. the next release today would be
+   `amis-2026-06-06b`, and a release tomorrow would be `amis-2026-06-07a`.
+   Date-based versioning is self-documenting: you can tell at a glance how old
+   a deployed cache is. Bumping it invalidates the old cache so users
+   definitely get the fresh files.
 
 3. (Optional but recommended) also replace `service-worker.js` itself with
    the version-bumped copy. The browser auto-detects SW file changes and
