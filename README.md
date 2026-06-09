@@ -112,7 +112,7 @@ To push an update:
    this line near the top:
 
    ```js
-   const CACHE_VERSION = 'amis-2026-06-06a';
+   const CACHE_VERSION = 'amis-2026-06-06d';
    ```
 
    Change it to today's date. The scheme is `amis-YYYY-MM-DD` plus a trailing
