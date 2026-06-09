@@ -16676,8 +16676,11 @@ function filterMicrobes() {
       const funcMatch = m.functions.some(f => f.startsWith(q) || f.includes(q));
       // Genus: starts with
       const genusMatch = m.genus.toLowerCase().startsWith(q);
-      // Benefits: only match if a word starts with query (not substring within word)
-      const benefitMatch = m.benefits.some(b =>
+      // Benefits: only match if a word starts with query (not substring within
+      // word), AND only for queries of 4+ chars. Short queries (2–3 chars) are
+      // almost always a genus/name prefix; searching descriptive benefit prose
+      // for them dredges up false matches (e.g. "tri" matching "Triggers SAR").
+      const benefitMatch = q.length >= 4 && m.benefits.some(b =>
         b.toLowerCase().split(/\s+/).some(w => w.replace(/[^a-z]/g,'').startsWith(q))
       );
       // Crops field: includes() — direct match against crop tags.
@@ -16685,12 +16688,16 @@ function filterMicrobes() {
       const crops = Array.isArray(m.documentedCrops) ? m.documentedCrops : [];
       const cropDirectMatch = crops.some(c => c.toLowerCase().includes(q) || q.includes(c.toLowerCase()));
       const cropAliasMatch = cropAliasHit && crops.includes(cropAliasHit);
-      // Taxonomy synonyms: previously_known_as / current_synonym / family etc.
+      // Taxonomy synonyms: previously_known_as / current_synonym etc.
       // Lets a farmer who learnt the old name still find the entry after rename.
+      // NOTE: t.family is deliberately NOT searched here — high-rank taxonomic
+      // names collide with genus prefixes (e.g. family "Trichocomaceae" on
+      // Aspergillus/Penicillium starts with "tri" and would false-match a
+      // search for the genus Trichoderma, which is a different family).
       let synonymMatch = false;
       if (m.taxonomy) {
         const t = m.taxonomy;
-        const synFields = [t.previously_known_as, t.current_synonym, t.previously_known_as_phylum, t.family];
+        const synFields = [t.previously_known_as, t.current_synonym, t.previously_known_as_phylum];
         synonymMatch = synFields.some(function(f) {
           if (!f) return false;
           return f.toLowerCase().split(/[\s.,()]+/).some(function(w){ return w.startsWith(q); });
