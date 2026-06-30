@@ -3090,7 +3090,7 @@ input[type="number"] {
           </div>
         </div>
         <div class="hero-title"><span data-i18n="home.heroTitle1" class="hero-title-plain">AgriMicrobe</span><br><span data-i18n="home.heroTitle2">Intelligence</span> <span data-i18n="home.heroTitle3" class="hero-title-plain">System</span></div>
-        <div class="hero-sub" id="heroSub">AI-powered microbial recommendation engine for Malaysian agriculture. Covers <span id="heroCropCount">42</span> crop types, <span id="heroMicrobeCount">82</span> beneficial microbes — diagnose problems and get ranked recommendations online or offline.</div>
+        <div class="hero-sub" id="heroSub">AI-powered microbial recommendation engine for Malaysian agriculture. Covers <span id="heroCropCount">42</span> crop types, <span id="heroMicrobeCount">83</span> beneficial microbes — diagnose problems and get ranked recommendations online or offline.</div>
       </div>
     </div>
 
@@ -3099,7 +3099,7 @@ input[type="number"] {
         <div class="tile-icon">🔬</div>
         <div class="tile-body">
           <div class="tile-title" data-i18n="home.tile.library.title">Microbe Library</div>
-          <div class="tile-sub" id="tileLibrarySub">Browse all <span id="tileMicrobeCount">82</span> beneficial microbes. Filter by function, resistance, and application method.</div>
+          <div class="tile-sub" id="tileLibrarySub">Browse all <span id="tileMicrobeCount">83</span> beneficial microbes. Filter by function, resistance, and application method.</div>
         </div>
       </div>
       <div class="home-tile" onclick="showScreen('advisor', navBtn('advisor'))">
@@ -3153,9 +3153,9 @@ input[type="number"] {
       </div>
     </div>
     <div class="stats-bar">
-      <div class="stat-item" onclick="showStatModal('microbes')"><div class="stat-num" id="statTotal">82</div><div class="stat-lbl" data-i18n="home.stats.microbes">Microbes</div></div>
+      <div class="stat-item" onclick="showStatModal('microbes')"><div class="stat-num" id="statTotal">83</div><div class="stat-lbl" data-i18n="home.stats.microbes">Microbes</div></div>
       <div class="stat-item" onclick="showStatModal('genera')"><div class="stat-num" id="statGenera">55</div><div class="stat-lbl" data-i18n="home.stats.genera">Genera</div></div>
-      <div class="stat-item" onclick="showStatModal('synergies')"><div class="stat-num" id="statSynergies">27</div><div class="stat-lbl" data-i18n="home.stats.synergies">Synergies</div></div>
+      <div class="stat-item" onclick="showStatModal('synergies')"><div class="stat-num" id="statSynergies">28</div><div class="stat-lbl" data-i18n="home.stats.synergies">Synergies</div></div>
       <div class="stat-item" onclick="showStatModal('crops')"><div class="stat-num" id="statCrops">42</div><div class="stat-lbl" data-i18n="home.stats.crops">Crop Types</div></div>
     </div>
   </div>
@@ -5165,6 +5165,17 @@ const MICROBES = [
     shelf_life:{liquid:"4 months",powder:"12 months",freeze_dried:"24 months"},
     shelf_life_opened:{liquid:"1 month",powder:"3 months"},shelf_life_diluted_hours:24,storage_conditions:"Refrigerate. UV sensitive — store in dark.",fermentation:{type:"liquid",temp:"25–28°C",ph:"5.5–6.5",duration:"7–10 days",medium:"Potato dextrose broth"},drying_method:"spray_dry",carrier:"Talc / silica", propagation_category:"farm_propagate",activation_method:"Dilute in water. Add oil (1mL/L). Soil drench or granule incorporation.",propagation_method:"SSF on rice bran or millet: same protocol as Beauveria but incubate at slightly higher temp (28–32°C). Produces olive-green conidia (different from white Beauveria). 7–10 days. Shade-dry carefully.",propagation_difficulty:"hard",propagation_gram_type:"fungi", viability_rate:"≥75% conidia germination",shelf_life_temps:{c4:"18 months",c25:"12 months",c35:"5 months",c45:"1 month"}, propagation_notes:"Metarhizium SSF is feasible at farm level but same contamination risk as Beauveria. The olive-green colour distinguishes it from Trichoderma (bright green) and Aspergillus (black). Grows faster than Beauveria. Best used for soil insect pests — apply as soil drench or granule.", storage_temp:"<4°C", colonisation:"medium", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"soil", repro_speed:"medium", pesticide_compat:"caution", notes:"Soil-applied entomopathogen. No activation needed — conidia infect on contact with soil insects. Apply as drench around root zone. · Primary agent for soil-borne insects. Best for termite management in orchards.",
     strains:[{id:"F52 (ESF1)",product:"Met52/BIO1020",company:"Novozymes/Bayer",notes:"Best-documented commercial strain; soil insects"},{id:"ARSEF 2575",product:"—",company:"USDA-ARS",notes:"Chafer grub specialist; reference strain"},{id:"V275",product:"Green Muscle",company:"CABI Bioscience",notes:"Locust biocontrol — arid environments"}] },
+
+  { id:83, name:"Lecanicillium lecanii",documentedCrops:["chili","cucumber","okra","ornamental","tomato","vegetable"], latin:"Lecanicillium lecanii", type:"Fungi", genus:"Lecanicillium",
+    taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Cordycipitaceae",previously_known_as:"Verticillium lecanii",current_synonym:"Akanthomyces lecanii — 2017 molecular revision (Kepler et al.) places the type species here; the genus realignment remains actively debated in mycology and 'Lecanicillium' is still the most widely used name in agricultural literature and product labels."}, functions:["insect_control","biocontrol"],
+    benefits:["Aphid, whitefly, thrips & scale control","Soft-bodied sap-sucker specialist","Some activity on rust fungi (hyperparasite)","Greenhouse-proven since 1970s UK trials"],
+    application:["Foliar spray"],
+    uv_resistance:"low", heat_resistance:"low", drought_resistance:"low", salt_resistance:"low",
+    temp:{min:15,opt:25,max:30}, ph:{min:4.0,opt:6.5,max:8.0},
+    soil_survival_days:null, leaf_survival_hours:24,
+    shelf_life:{liquid:"3 months",powder:"9 months",freeze_dried:"18 months"},
+    shelf_life_opened:{liquid:"2 weeks",powder:"2 months"},shelf_life_diluted_hours:12,storage_conditions:"Refrigerate. Highly UV- and dry-air sensitive — store dark, apply only in high-humidity windows.",fermentation:{type:"solid",temp:"25°C",ph:"6.0",duration:"12 days",medium:"Steamed polished rice (28.5% moisture), 75% ambient RH, KNO₃ supplement improves yield"},drying_method:"spray_dry",carrier:"Talc", propagation_category:"farm_propagate",activation_method:"Dilute in water. Apply only when foliage will stay wet/humid for several hours after spraying — dry conditions kill conidia before infection occurs.",propagation_method:"SSF on steamed polished rice following the same general principle as Beauveria/Metarhizium, but L. lecanii is markedly more humidity-demanding at every stage — both production and field efficacy collapse below roughly 75% RH. Farm-level production is harder to get right than the other Hypocreales entomopathogens; quality control is difficult without lab verification.",propagation_difficulty:"hard",propagation_gram_type:"fungi", viability_rate:"≥70% conidia germination (lab-grade product)",shelf_life_temps:{c4:"12 months",c25:"6 months",c35:"2 months",c45:"<1 month"}, propagation_notes:"This is the most humidity-sensitive of AMIS's entomopathogenic fungi. Malaysia's ambient humidity generally favours it outdoors, but greenhouse/dry-season use needs misting to sustain infection. Best reserved for shaded, humid microclimates or evening application.", storage_temp:"<4°C", colonisation:"low", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"soil", repro_speed:"medium", pesticide_compat:"caution", notes:"Targets soft-bodied sap-suckers (aphid, whitefly, thrips, scale, mealybug) that Bt cannot touch — fills the gap in a layered programme. Requires sustained high humidity (≥75% RH) for conidia to germinate and infect; this is the single biggest reason field trials under-perform lab results. Apply in late afternoon/evening so leaves stay wet overnight. · Taxonomy note: products and most farmer-facing literature still use 'Lecanicillium' or the older 'Verticillium lecanii' — current scientific consensus on the Akanthomyces realignment is unsettled, so AMIS keeps the familiar name as primary.",
+    strains:[{id:"KV01",product:"Mycotal/Vertalec (historic Koppert/Arysta listing)",company:"Koppert Biological Systems",notes:"Most-cited registered strain for L. lecanii specifically; note Koppert's current Mycotal/Vertalec branding is attributed to the related species L. muscarium (Ve6) and L. longisporum respectively — check current label species before buying"},{id:"NCIM 1312",product:"Various Indian WP formulations (Biosar, Biovert, Kavach Verticillium, and others)",company:"Multiple Indian biopesticide manufacturers",notes:"Common reference strain in South/Southeast Asian commercial products"},{id:"41185",product:"Research strain — high-yield SSF",company:"Korea Bio Co. (academic)",notes:"Source of the published solid-state fermentation protocol used for this card's production parameters; effective at lower spore counts (10⁷/mL) than typical Lecanicillium strains (10⁸/mL)"}] },
 
   { id:40, name:"Isaria fumosorosea", latin:"Isaria fumosorosea", type:"Fungi", genus:"Isaria", documentedCrops:["banana","chili","coconut","cucumber","durian","guava","jackfruit","lime","mango","okra","papaya","pineapple","soursop","tomato","vegetable"],
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Cordycipitaceae",current_synonym:"Cordyceps fumosorosea"}, functions:["insect_control","biocontrol"],
@@ -8460,6 +8471,7 @@ const GENUS_NAMES_I18N = {
   Isaria:             '棒束孢属',
   Klebsiella:         '克雷伯氏菌属',
   Lactobacillus:      '乳酸杆菌属',
+  Lecanicillium:      '蜡蚧轮枝菌属',
   Lysobacter:         '溶杆菌属',
   Mesorhizobium:      '中慢生根瘤菌属',
   Metarhizium:        '绿僵菌属',
@@ -14603,6 +14615,28 @@ Object.assign(STRINGS, {
     zh: '停止进食:<strong>2-6 小时</strong>。死亡:1-3 天。每 5-7 天重新施用。'
   },
 
+  // Roster row 1b: Bt aizawai
+  'mfg.dy.pest.bta.targets': {
+    en: '<strong>Caterpillars</strong> — especially diamondback moth (kurstaki-resistant strains), beet armyworm, cabbage looper',
+    ms: '<strong>Ulat</strong> — terutamanya kupu-kupu kubis (DBM) (strain rintang Btk), ulat tentera bit, ulat pengukur kubis',
+    zh: '<strong>毛虫类</strong> — 尤其是小菜蛾(对 Btk 已产生抗性的品系)、甜菜夜蛾、菜粉蝶幼虫'
+  },
+  'mfg.dy.pest.bta.how': {
+    en: 'Crystal toxin (Cry1C protein) eaten with leaf → binds to gut wall → larva stops feeding within hours, dies 1-3 days. Different toxin profile from kurstaki — useful where DBM has built resistance to Btk.',
+    ms: 'Toksin hablur (protein Cry1C) dimakan bersama daun → mengikat dinding usus → larva berhenti makan dalam beberapa jam, mati 1-3 hari. Profil toksin berbeza daripada kurstaki — berguna apabila DBM telah membina rintangan terhadap Btk.',
+    zh: '晶体毒蛋白(Cry1C 蛋白)随叶片摄入 → 结合肠壁 → 幼虫数小时内停止进食,1-3 天后死亡。毒蛋白谱与 kurstaki 不同 — 在小菜蛾对 Btk 产生抗性时特别有用。'
+  },
+  'mfg.dy.pest.bta.rate': {
+    en: '1-2 g/L water<br>(commercial product, e.g. XenTari, Agree)',
+    ms: '1-2 g/L air<br>(produk komersial, cth. XenTari, Agree)',
+    zh: '1-2 g/L 水<br>(商业产品,如 XenTari、Agree)'
+  },
+  'mfg.dy.pest.bta.time': {
+    en: 'Stops feeding: <strong>2-6 hours</strong>. Death: 1-3 days. Reapply every 5-7 days.',
+    ms: 'Berhenti makan: <strong>2-6 jam</strong>. Kematian: 1-3 hari. Aplikasi semula setiap 5-7 hari.',
+    zh: '停止进食:<strong>2-6 小时</strong>。死亡:1-3 天。每 5-7 天重新施用。'
+  },
+
   // Roster row 2: Bti
   'mfg.dy.pest.bti.targets': {
     en: '<strong>Mosquito + fly larvae only</strong> in standing water',
@@ -15584,21 +15618,35 @@ function applyTranslations() {
   });
 
   // Special cases — strings with embedded dynamic counts ────────────────────
-  // The hero subtitle and library tile mention {crops} and {microbes} counts
-  // that get computed at startup. Handle these explicitly.
+  // The hero subtitle and library tile mention {crops} and {microbes} counts.
+  // IMPORTANT: these must be computed directly from the live data arrays, NOT
+  // read from the #heroMicrobeCount/#tileMicrobeCount span textContent — this
+  // function runs on every boot (via initLanguage→setLanguage→applyTranslations,
+  // wired to fire as early as possible) and assigning heroSub.textContent below
+  // destroys those child spans on its very first run, before any later
+  // live-count script gets a chance to update them. Reading the data directly
+  // sidesteps that race entirely and keeps these numbers correct even if the
+  // app's microbe/crop counts change without every other reference being
+  // manually bumped.
   // Also sync document.title — querySelectorAll picks up the <title> tag,
   // but some browsers cache the displayed tab title and need an explicit nudge.
   try { document.title = t('app.title'); } catch (e) { /* non-critical */ }
 
   const heroSub = document.getElementById('heroSub');
   if (heroSub) {
-    const crops = (document.getElementById('heroCropCount') || {}).textContent || '42';
-    const microbes = (document.getElementById('heroMicrobeCount') || {}).textContent || '82';
+    const microbes = (typeof MICROBES !== 'undefined' && Array.isArray(MICROBES))
+      ? MICROBES.length
+      : ((document.getElementById('heroMicrobeCount') || {}).textContent || '83');
+    const crops = (typeof CROP_LIST !== 'undefined' && Array.isArray(CROP_LIST))
+      ? CROP_LIST.reduce(function(n, g){ return n + (g.items ? g.items.length : 0); }, 0)
+      : ((document.getElementById('heroCropCount') || {}).textContent || '42');
     heroSub.textContent = t('home.heroSub', { crops, microbes });
   }
   const libTileSub = document.getElementById('tileLibrarySub');
   if (libTileSub) {
-    const microbes = (document.getElementById('tileMicrobeCount') || {}).textContent || '82';
+    const microbes = (typeof MICROBES !== 'undefined' && Array.isArray(MICROBES))
+      ? MICROBES.length
+      : ((document.getElementById('tileMicrobeCount') || {}).textContent || '83');
     libTileSub.textContent = t('home.tile.library.sub', { microbes });
   }
 
@@ -20530,7 +20578,7 @@ function getTargetKey(m) {
   // Fungi — established classes
   if (m.genus === "Trichoderma" || m.genus === "Gliocladium" || m.genus === "Clonostachys") return "tricho";
   if (["Glomus","Gigaspora","Scutellospora","Funneliformis","Rhizophagus"].includes(m.genus)) return "amf";
-  if (["Beauveria","Metarhizium","Isaria"].includes(m.genus)) return "entomo";
+  if (["Beauveria","Metarhizium","Isaria","Lecanicillium"].includes(m.genus)) return "entomo";
   if (["Saccharomyces","Yarrowia","Candida"].includes(m.genus)) return "yeast";
   // Nematode-killing fungi
   if (["Purpureocillium","Pochonia","Hirsutella","Paecilomyces"].includes(m.genus)) return "nematocidal";
@@ -22752,6 +22800,7 @@ function renderMfgTab(tab) {
       + '</tr></thead><tbody>'
       + [
           ['<strong>Bacillus thuringiensis (Bt)</strong><br><span style="font-size:11px;color:var(--muted)">var. <em>kurstaki</em></span>', t('mfg.dy.pest.bt.targets'),   t('mfg.dy.pest.bt.how'),   t('mfg.dy.pest.bt.rate'),   t('mfg.dy.pest.bt.time')],
+          ['<strong>Bacillus thuringiensis</strong><br><span style="font-size:11px;color:var(--muted)">var. <em>aizawai</em> (Bta)</span>', t('mfg.dy.pest.bta.targets'), t('mfg.dy.pest.bta.how'), t('mfg.dy.pest.bta.rate'), t('mfg.dy.pest.bta.time')],
           ['<strong>Bacillus thuringiensis</strong><br><span style="font-size:11px;color:var(--muted)">var. <em>israelensis</em> (Bti)</span>', t('mfg.dy.pest.bti.targets'), t('mfg.dy.pest.bti.how'),  t('mfg.dy.pest.bti.rate'),  t('mfg.dy.pest.bti.time')],
           ['<strong>Beauveria bassiana</strong>',                                                                                              t('mfg.dy.pest.beau.targets'), t('mfg.dy.pest.beau.how'), t('mfg.dy.pest.beau.rate'), t('mfg.dy.pest.beau.time')],
           ['<strong>Metarhizium anisopliae</strong>',                                                                                          t('mfg.dy.pest.meta.targets'), t('mfg.dy.pest.meta.how'), t('mfg.dy.pest.meta.rate'), t('mfg.dy.pest.meta.time')],
@@ -23398,6 +23447,14 @@ const SYNERGIES = [
     mechanism: "When soil nitrate/ammonium is abundant, the plant has no metabolic incentive to form nodules — it stops feeding sugars to Rhizobium. High N fertiliser applied at or before inoculation completely suppresses nodule formation. This wastes the inoculant investment.",
     use: "Do not apply urea within 4 weeks of Rhizobium inoculation. If starter N is needed, use a minimal rate (10–15 kg N/acre max) at planting only.",
     crops: "All legume crops — soybean, groundnut, cowpea, beans"
+  },
+  {
+    rating: "neutral",
+    a: "Beauveria bassiana",
+    b: "Lecanicillium lecanii",
+    mechanism: "Both are Cordycipitaceae entomopathogens that infect via cuticle penetration, and their host ranges overlap heavily on whitefly and aphid — comparative trials generally show Beauveria achieving higher mortality on these shared targets, so this is redundancy rather than true synergy. Lecanicillium's main advantage is specificity for scale insects and certain thrips, plus mild activity on rust fungi that Beauveria lacks. No documented antagonism between the two.",
+    use: "Tank-mixing is compatible but rarely necessary — choose Beauveria as the primary workhorse for whitefly/aphid/thrips, and reserve Lecanicillium for scale-insect-heavy situations or where humidity is reliably high enough to favour its slower, more humidity-demanding infection process. If combining, both need the same evening application and post-spray humidity window.",
+    crops: "Vegetable and ornamental crops with mixed sap-sucking pest pressure (aphid, whitefly, scale, thrips)"
   }
 
 ];
@@ -23410,10 +23467,10 @@ const RATING_LABELS = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════
-// SYNERGIES_I18N — translation for the 27 synergy pair cards
+// SYNERGIES_I18N — translation for the 28 synergy pair cards
 // ═══════════════════════════════════════════════════════════════════════
 //
-// Each synergy is keyed by its array index (0..26). Each entry holds:
+// Each synergy is keyed by its array index (0..27). Each entry holds:
 //   { ms: {mechanism, use, crops}, zh: {mechanism, use, crops} }
 //
 // `a`, `b`, and `rating` are NOT translated:
@@ -23755,6 +23812,18 @@ const SYNERGIES_I18N = {
       "mechanism": "当土壤中硝态氮/铵态氮充足时,植物没有代谢动机形成根瘤 — 它会停止向根瘤菌属 (Rhizobium) 输送糖。高量氮肥在接种时或接种前施用,会完全抑制根瘤形成,白白浪费接种剂的投入。",
       "use": "根瘤菌属 (Rhizobium) 接种前后 4 周内请勿施用尿素。如必须用启动氮,只在播种时使用最低用量(每英亩最多 10–15 kg N)。",
       "crops": "所有豆科作物 — 大豆、花生、豇豆、菜豆"
+    }
+  },
+  "27": {
+    "ms": {
+      "mechanism": "Kedua-duanya adalah patogen serangga Cordycipitaceae yang menjangkiti melalui penembusan kutikel, dan julat perumah mereka bertindih banyak pada kutu putih dan afid — kajian perbandingan umumnya menunjukkan Beauveria mencapai kematian lebih tinggi pada sasaran yang sama ini, jadi ini adalah lebihan, bukan sinergi sebenar. Kelebihan utama Lecanicillium ialah kekhususan terhadap serangga sisik dan thrips tertentu, serta aktiviti ringan terhadap kulat karat yang tiada pada Beauveria. Tiada antagonisme didokumenkan antara kedua-duanya.",
+      "use": "Pencampuran tangki adalah serasi tetapi jarang diperlukan — pilih Beauveria sebagai ejen utama untuk kutu putih/afid/thrips, dan simpan Lecanicillium untuk situasi serangga sisik yang teruk atau di mana kelembapan sentiasa cukup tinggi untuk menyokong proses jangkitannya yang lebih perlahan dan lebih bergantung kepada kelembapan. Jika dicampur, kedua-duanya memerlukan aplikasi petang yang sama dan tempoh kelembapan selepas semburan.",
+      "crops": "Tanaman sayuran dan hiasan dengan tekanan perosak penghisap bercampur (afid, kutu putih, serangga sisik, thrips)"
+    },
+    "zh": {
+      "mechanism": "两者都是通过穿透昆虫角质层侵染的虫草菌科 (Cordycipitaceae) 病原真菌,且它们在粉虱和蚜虫上的寄主范围高度重叠 — 对比试验普遍显示白僵菌属 (Beauveria) 对这些共同目标的致死率更高,因此这属于功能重叠而非真正的协同效应。蜡蚧轮枝菌属 (Lecanicillium) 的主要优势在于对介壳虫与特定蓟马的专一性,以及对锈病真菌的轻微抑制作用(这是白僵菌属所不具备的)。两者之间未发现拮抗作用。",
+      "use": "混合喷施在相容性上没有问题,但通常没有必要 — 将白僵菌属作为防治粉虱/蚜虫/蓟马的主力,蜡蚧轮枝菌属则保留给介壳虫压力大、或湿度持续足够高以利于其较慢、更依赖湿度的侵染过程的场景。若要混用,两者都需要相同的傍晚施用时机与喷后湿润期。",
+      "crops": "蔬菜与观赏植物,适用于蚜虫、粉虱、介壳虫、蓟马等混合刺吸式害虫压力的情况"
     }
   }
 };
