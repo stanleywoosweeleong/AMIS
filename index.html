@@ -3467,7 +3467,7 @@ input[type="number"] {
               <div class="input-label" data-i18n="advisor.showMethods">Show methods</div>
               <div style="display:flex; border:1.5px solid var(--border); border-radius:8px; overflow:hidden; flex-wrap:wrap">
                 <button id="dosageViewDetailed" data-i18n="advisor.show.detailed" onclick="setDosageView('detailed')"
-                  style="padding:9px 12px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:var(--accent); color:#fff; transition:all .2s; white-space:nowrap">
+                  style="padding:9px 12px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:var(--surface); color:var(--muted); transition:all .2s; white-space:nowrap">
                   📐 Detailed
                 </button>
                 <button id="dosageViewAll" data-i18n="advisor.show.compact" onclick="setDosageView('all')"
@@ -3475,7 +3475,7 @@ input[type="number"] {
                   Compact
                 </button>
                 <button id="dosageViewPrimary" data-i18n="advisor.show.best" onclick="setDosageView('primary')"
-                  style="padding:9px 12px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:var(--surface); color:var(--muted); transition:all .2s; white-space:nowrap; border-left:1px solid var(--border)">
+                  style="padding:9px 12px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:var(--accent); color:#fff; transition:all .2s; white-space:nowrap; border-left:1px solid var(--border)">
                   Best only
                 </button>
               </div>
@@ -9313,6 +9313,9 @@ function getStrainNoteText(note) {
 //     as commercial names
 //   - "drench", "drip line", "rhizosphere", "root zone" use established terms
 const METHOD_FITNESS_NOTES_I18N = {
+  "Not listed in this organism's application profile — use only if your product label supports it":
+    { ms: 'Tidak disenaraikan dalam profil aplikasi organisma ini — gunakan hanya jika label produk anda menyokongnya',
+      zh: '此微生物的施用资料中未列出此方法 — 仅在产品标签支持时使用' },
   '5–10 mL slurry per kg seed; once at sowing':
     { ms: '5–10 mL bubur setiap kg benih; sekali semasa menyemai',
       zh: '每 kg 种子 5–10 mL 浆液;播种时一次' },
@@ -10187,6 +10190,101 @@ function translateDuration(str) {
 }
 
 // ═══════════════════════════════════════════════════════
+// QUERY PRE-PROCESSING — Chinese keyword bridge + negation handling
+// ═══════════════════════════════════════════════════════
+// The offline regexes below are English/Malay. ZH_QUERY_TERMS rewrites
+// common Chinese crop / symptom / environment words into the English
+// tokens the regexes already understand, IN PLACE (so negation cues that
+// precede them still apply). Order matters: longer terms that contain a
+// shorter one (红毛榴莲 ⊃ 榴莲, 菠萝蜜 ⊃ 菠萝, 姜黄 ⊃ 姜, 黄瓜 ⊃ 黄) come first.
+const ZH_QUERY_TERMS = [
+  // ── Crops ──
+  ['红毛榴莲', ' soursop '], ['猫山王', ' musang king '], ['黑刺', ' black thorn '],
+  ['榴莲', ' durian '], ['榴槤', ' durian '], ['山竹', ' mangosteen '], ['香茅', ' lemongrass '],
+  ['柚子', ' pomelo '], ['油棕', ' oil palm '], ['火龙果', ' dragon fruit '], ['百香果', ' passion fruit '],
+  ['番薯', ' sweet potato '], ['红薯', ' sweet potato '], ['地瓜', ' sweet potato '], ['木薯', ' cassava '],
+  ['长豆', ' long bean '], ['豆角', ' long bean '], ['苦瓜', ' bitter gourd '],
+  ['花椰菜', ' cauliflower '], ['菜花', ' cauliflower '], ['西兰花', ' broccoli '],
+  ['水稻', ' paddy '], ['稻田', ' paddy '], ['稻米', ' paddy '], ['稻瘟', ' paddy blast '], ['稻', ' paddy '],
+  ['辣椒', ' chili '], ['胡椒', ' pepper '], ['香蕉', ' banana '], ['西红柿', ' tomato '], ['番茄', ' tomato '],
+  ['橡胶', ' rubber '], ['可可', ' cocoa '], ['甘蔗', ' sugarcane '], ['玉米', ' corn '],
+  ['大豆', ' soybean '], ['黄豆', ' soybean '], ['菠萝蜜', ' jackfruit '], ['波罗蜜', ' jackfruit '],
+  ['菠萝', ' pineapple '], ['凤梨', ' pineapple '], ['木瓜', ' papaya '], ['西瓜', ' watermelon '],
+  ['黄瓜', ' cucumber '], ['秋葵', ' okra '], ['芒果', ' mango '], ['红毛丹', ' rambutan '],
+  ['龙眼', ' longan '], ['荔枝', ' lychee '], ['青柠', ' lime '], ['柠檬', ' lemon '],
+  ['番石榴', ' guava '], ['芭乐', ' guava '], ['杨桃', ' starfruit '], ['牛油果', ' avocado '],
+  ['尖不辣', ' cempedak '], ['面包果', ' breadfruit '], ['椰子', ' coconut '],
+  ['姜黄', ' turmeric '], ['南姜', ' galangal '], ['生姜', ' ginger '], ['姜', ' ginger '],
+  ['空心菜', ' kangkung '], ['蕹菜', ' kangkung '], ['菠菜', ' spinach '], ['生菜', ' lettuce '],
+  ['茄子', ' eggplant '], ['南瓜', ' pumpkin '], ['花生', ' groundnut '], ['蔬菜', ' vegetable '],
+  ['青菜', ' vegetable '], ['草坪', ' turf '], ['兰花', ' orchid '], ['花卉', ' ornamental '],
+  // ── Symptoms ──
+  ['根腐病', ' root rot '], ['根部腐烂', ' root rot '], ['根腐', ' root rot '], ['烂根', ' root rot '],
+  ['疫霉', ' phytophthora '], ['新叶发黄', ' new leaves yellow '], ['嫩叶发黄', ' new leaves yellow '],
+  ['新叶黄化', ' new leaves yellow '], ['脉间黄化', ' interveinal yellow '], ['叶脉间发黄', ' interveinal yellow '],
+  ['叶脉保持绿色', ' veins green '], ['花叶病', ' mosaic yellow virus '],
+  ['发黄', ' yellowing '], ['变黄', ' yellowing '], ['黄化', ' yellowing '], ['黄叶', ' yellow leaves '], ['叶黄', ' yellow leaves '],
+  ['枯萎病', ' fusarium wilt '], ['萎蔫', ' wilting '], ['枯萎', ' wilting '], ['凋萎', ' wilting '],
+  ['白粉病', ' powdery mildew '], ['霜霉病', ' downy mildew '], ['灰霉', ' botrytis '],
+  ['炭疽', ' anthracnose '], ['叶枯', ' blight '], ['疫病', ' blight '],
+  ['根结线虫', ' root knot nematode '], ['线虫', ' nematode '],
+  ['毛虫', ' caterpillar '], ['蓟马', ' thrips '], ['粉虱', ' whitefly '], ['蚜虫', ' aphid '],
+  ['粉蚧', ' mealybug '], ['介壳虫', ' scale insect '], ['蛀虫', ' borer '], ['害虫', ' insect '], ['虫害', ' insect '],
+  ['缺磷', ' phosphorus deficiency '], ['缺钾', ' potassium deficiency '], ['叶缘焦枯', ' leaf scorch '],
+  ['缺镁', ' magnesium deficiency '], ['缺铁', ' iron deficiency '], ['缺硫', ' sulphur deficiency '], ['缺氮', ' yellowing '],
+  ['裂果', ' fruit cracking '], ['日灼', ' sunscald '], ['落花', ' flower blast '], ['花穗', ' panicle '],
+  ['病毒', ' virus '], ['灵芝', ' ganoderma '], ['红根病', ' red root '], ['白根病', ' white root '],
+  ['盐害', ' salinity '], ['盐碱', ' salinity '],
+  ['移栽', ' transplant '], ['育苗', ' nursery '], ['幼苗', ' seedling '], ['土壤健康', ' soil health '], ['改良土壤', ' improve soil '],
+  // ── Environment / severity ──
+  ['排水不良', ' waterlogged '], ['积水', ' waterlogged '], ['水浸', ' waterlogged '], ['淹水', ' waterlogged '],
+  ['淹没', ' flooded '], ['泡水', ' waterlogged '], ['水涝', ' waterlogged '], ['涝', ' waterlogged '],
+  ['暴雨', ' heavy rain '], ['大雨', ' heavy rain '], ['干旱', ' drought '], ['旱季', ' dry season '], ['高温', ' high temp '],
+  ['金马仑', ' cameron '], ['云顶', ' genting '], ['高原', ' highland '], ['沿海', ' coastal '], ['海边', ' coastal '],
+  ['泥炭', ' peat '], ['重金属', ' heavy metal '], ['污染', ' contaminated '],
+  ['枯死', ' dying '], ['快死', ' dying '], ['严重', ' severe '], ['轻微', ' mild '],
+];
+function amisNormaliseChineseQuery(text) {
+  if (!/[一-鿿]/.test(text)) return text;
+  let out = text;
+  ZH_QUERY_TERMS.forEach(function(pair) {
+    if (out.indexOf(pair[0]) !== -1) out = out.split(pair[0]).join(pair[1]);
+  });
+  return out;
+}
+
+// Negation handling. Removes negated symptom phrases so "no root rot and no
+// yellow leaves" does not trigger root-rot or yellowing rules. A negation
+// cue's scope runs to the end of its clause (punctuation or a contrast word
+// like "but"), and stops early at "and"/"dan"/和 — the next item after
+// "and" is only negated if it carries its own cue ("no X and no Y"), while
+// "or"/"nor" lists stay inside the scope ("no wilting or yellowing").
+// Returns { text, negated[] } — negated phrases are shown back to the user.
+const AMIS_NEG_CUE = /\b(?:no|not|never|without|none|nor|free of|free from|absence of|tiada|tidak ada|tidak|tak ada|takde|tak|bukan|tanpa)\b|没有|沒有|并无|未见|未有|不是|不见|没|無|无/;
+const AMIS_CLAUSE_SPLIT = /([.;:!?\n,，。；：！？、]|\b(?:but|however|although|though|except|yet|tetapi|tapi|namun|cuma|walaupun)\b|但是|可是|不过|但)/;
+function amisStripNegations(text) {
+  const negated = [];
+  const pieces = text.split(AMIS_CLAUSE_SPLIT);
+  const out = pieces.map(function(clause, idx) {
+    if (idx % 2 === 1) return clause; // separator captured by split()
+    let rest = clause, kept = '';
+    for (let guard = 0; guard < 20; guard++) {
+      const m = rest.match(AMIS_NEG_CUE);
+      if (!m) { kept += rest; break; }
+      kept += rest.slice(0, m.index) + ' ';
+      const after = rest.slice(m.index + m[0].length);
+      const conj = after.match(/\s(?:and|dan|serta|plus|also)\s|和|及|并且/);
+      const scope = conj ? after.slice(0, conj.index) : after;
+      rest = conj ? after.slice(conj.index) : '';
+      const phrase = scope.trim();
+      if (phrase) negated.push(phrase);
+    }
+    return kept;
+  });
+  return { text: out.join(''), negated: negated };
+}
+
+// ═══════════════════════════════════════════════════════
 // OFFLINE RULE ENGINE
 // ═══════════════════════════════════════════════════════
 function offlineEngine(text, preParsed) {
@@ -10205,7 +10303,18 @@ function offlineEngine(text, preParsed) {
   // nutrient deficiencies, panicle blight, viral disease, tree root disease,
   // salinity stress, and several others. Mode 2 keeps every LLM-detected tag
   // and adds anything the offline regex catches in the original text on top.
-  const t = text.toLowerCase();
+  // fullText: everything the farmer wrote (Chinese bridged to English) —
+  //           used for crop and implicit-location detection, where a
+  //           negation nearby ("no yellow leaves on durian") must not hide
+  //           the crop.
+  // t:        the same text with negated phrases removed — used for every
+  //           symptom, environment and severity rule.
+  const fullText = amisNormaliseChineseQuery(String(text || '').toLowerCase());
+  const negation = amisStripNegations(fullText);
+  const t = negation.text;
+  // "Healthy" signals — checked on the full text because phrases like
+  // "no problems" are themselves negations.
+  const healthyMentioned = /\b(?:healthy|sihat|subur|doing well|growing well|looks? (?:good|fine)|no (?:problems?|issues?|symptoms?|disease)|tiada masalah)\b|健康|正常|没问题|没有问题|长得很好/.test(fullText);
 
   // Extended crop detection
   // ─────────────────────────────────────────────────────────────
@@ -10220,8 +10329,8 @@ function offlineEngine(text, preParsed) {
   //   • "lemongrass"     → was matching "lemon"  → wrong (totally different crop)
   //   • "limau bali"     → was matching "limau"  → wrong (pomelo, not lime)
   // Multi-word and longer-form terms therefore sit at the TOP of this regex.
-  const cropMatch = t.match(/durian belanda|mangosteen|manggis|lemongrass|serai|limau bali|kelapa sawit|oil palm|musang king|black thorn|mata kucing|dragon fruit|passion fruit|sweet potato|ubi keledek|ubi kayu|kacang panjang|kacang tanah|long bean|bitter gourd|spring onion|daun bawang|kobis bunga|fern shoots|pucuk paku|buah sukun|cauliflower|broccoli|brokoli|durian|d24|sultan|rice|paddy|sawah|chili|chilli|pepper|banana|pisang|tomato|tomatoes|sawit|rubber|getah|cocoa|koko|cacao|sugarcane|tebu|corn|maize|soybean|soya|legume|brassica|pineapple|nanas|papaya|betik|watermelon|tembikai|cucumber|timun|okra|bendi|mango|mangga|rambutan|soursop|jackfruit|nangka|longan|lychee|lime|limau|lemon|guava|jambu|pitaya|pitahaya|markisa|starfruit|carambola|belimbing|pomelo|avocado|cempedak|breadfruit|coconut|kelapa|cassava|ginger|halia|turmeric|kunyit|galangal|lengkuas|ulam|herbs|vegetable|sayur|leafy|kangkung|bayam|spinach|lettuce|selada|celery|carrot|lobak|eggplant|terung|brinjal|pumpkin|labu|peria|groundnut|cowpea|kacang|turfgrass|turf|lawn|golf|ornamental|flower|orchid|anggrek|jagung|salad/);
-  const parsed = { crop: cropMatch ? cropMatch[0] : "general", problem: [], environment: [], severity: "medium" };
+  const cropMatch = fullText.match(/durian belanda|mangosteen|manggis|lemongrass|serai|limau bali|kelapa sawit|oil palm|musang king|black thorn|mata kucing|dragon fruit|passion fruit|sweet potato|ubi keledek|ubi kayu|kacang panjang|kacang tanah|long bean|bitter gourd|spring onion|daun bawang|kobis bunga|fern shoots|pucuk paku|buah sukun|cauliflower|broccoli|brokoli|durian|d24|sultan|rice|paddy|sawah|chili|chilli|pepper|banana|pisang|tomato|tomatoes|sawit|rubber|getah|cocoa|koko|cacao|sugarcane|tebu|corn|maize|soybean|soya|legume|brassica|pineapple|nanas|papaya|betik|watermelon|tembikai|cucumber|timun|okra|bendi|mango|mangga|rambutan|soursop|jackfruit|nangka|longan|lychee|lime|limau|lemon|guava|jambu|pitaya|pitahaya|markisa|starfruit|carambola|belimbing|pomelo|avocado|cempedak|breadfruit|coconut|kelapa|cassava|ginger|halia|turmeric|kunyit|galangal|lengkuas|ulam|herbs|vegetable|sayur|leafy|kangkung|bayam|spinach|lettuce|selada|celery|carrot|lobak|eggplant|terung|brinjal|pumpkin|labu|peria|groundnut|cowpea|kacang|turfgrass|turf|lawn|golf|ornamental|flower|orchid|anggrek|jagung|salad/);
+  const parsed = { crop: cropMatch ? cropMatch[0] : "general", problem: [], environment: [], severity: "medium", negated: negation.negated };
 
   // Normalise crop aliases to canonical names
     if (CROP_ALIAS[parsed.crop]) parsed.crop = CROP_ALIAS[parsed.crop];
@@ -10260,6 +10369,12 @@ function offlineEngine(text, preParsed) {
       parsed.problem.push("root_rot");
       yellowMatched = true;
     }
+    // Waterlogged / flooded soil + yellowing: oxygen-starved roots and
+    // Phytophthora/Pythium root rot are the first suspects, so flag root rot
+    // alongside the default nitrogen reading (waterlogging also drives N loss).
+    if (/waterlog|flooded|standing water|banjir|poor drainage|air bertakung/.test(t)) {
+      if (parsed.problem.indexOf("root_rot") === -1) parsed.problem.push("root_rot");
+    }
     // Default: nitrogen deficiency (older leaves yellow first, uniform across leaf)
     // — applies when "yellow" is mentioned but no specific pattern was matched
     if (!yellowMatched) {
@@ -10284,10 +10399,15 @@ function offlineEngine(text, preParsed) {
   if (t.match(/white root|ganoderma|red root|root disease cocoa|tree dieback|cocoa dieback|vsd|vascular streak/)) parsed.problem.push("tree_root_disease");
   if (t.match(/salinity|salty soil|brackish|tanah masin|na toxicity|sodium/)) parsed.problem.push("salinity_stress");
 
+  // No symptom survived negation and the farmer described the crop as
+  // healthy → flag it so the UI says "no treatment needed" instead of
+  // presenting the maintenance list as a cure.
+  parsed.problem = parsed.problem.filter(function(p, i, arr) { return arr.indexOf(p) === i; });
+  parsed.healthy = parsed.problem.length === 0 && healthyMentioned;
   if (parsed.problem.length === 0) parsed.problem.push("general_stress");
 
   // Environment
-  if (t.match(/waterlog|flooded|heavy rain|wet soil|standing water|banjir/)) parsed.environment.push("wet");
+  if (t.match(/waterlog|flooded|heavy rain|wet soil|standing water|banjir|poor drainage|air bertakung/)) parsed.environment.push("wet");
   if (t.match(/hot|high temp|dry season|drought|kemarau/)) parsed.environment.push("hot_dry");
   if (t.match(/highland|cool|cold|cameron|genting|titiwangsa/)) parsed.environment.push("cool");
   if (t.match(/saline|salty|salt|coastal|masin/)) parsed.environment.push("saline");
@@ -10301,13 +10421,13 @@ function offlineEngine(text, preParsed) {
     if (!parsed.environment.includes(env)) parsed.environment.push(env);
   }
   // Paddy/rice = always wet
-  if (/padi|paddy|sawah|rice/.test(t)) envAdd("wet");
+  if (/padi|paddy|sawah|rice/.test(fullText)) envAdd("wet");
   // Highland locations in Malaysia = cool
-  if (/cameron|genting|titiwangsa|fraser|bukit tinggi|kundasang|highland/.test(t)) envAdd("cool");
+  if (/cameron|genting|titiwangsa|fraser|bukit tinggi|kundasang|highland/.test(fullText)) envAdd("cool");
   // Coastal/estuarine = saline-prone
-  if (/coastal|tanjung|seaside|estuary|muara|river mouth/.test(t)) envAdd("saline");
+  if (/coastal|tanjung|seaside|estuary|muara|river mouth/.test(fullText)) envAdd("saline");
   // Peat soil regions
-  if (/sarawak peat|peninsular peat|kuala selangor|tasek bera|peatland|tanah gambut/.test(t)) envAdd("peat");
+  if (/sarawak peat|peninsular peat|kuala selangor|tasek bera|peatland|tanah gambut/.test(fullText)) envAdd("peat");
   // Lowland tropical (default for Malaysia) — implicit hot+humid
   // We don't auto-add hot_dry because it's often misleading; only when explicit.
 
@@ -10347,6 +10467,9 @@ function offlineEngine(text, preParsed) {
       parsed.severity = preParsed.severity;
     }
   }
+
+  // If the LLM merge added a real problem, the crop is no longer "healthy".
+  if (parsed.problem.some(function(p) { return p !== 'general_stress'; })) parsed.healthy = false;
 
   // Score microbes
   const scores = {};
@@ -13625,6 +13748,32 @@ Object.assign(STRINGS, {
     ms: 'Pertanyaan anda tidak sepadan dengan corak masalah tertentu, jadi ini adalah cadangan umum. Untuk hasil yang lebih baik, terangkan simptom dengan lebih khusus — cth. <em>"daun dengan tompok berbulu putih"</em> atau <em>"daun kuning dengan urat hijau"</em>.',
     zh: '您的查询未能匹配到具体的问题特征,因此这些是通用建议。为了获得更好的结果,请更具体地描述症状 — 例如<em>「叶片有白色绒毛斑」</em>或<em>「黄叶绿脉」</em>。'
   },
+
+  // Parsed-query echo ("what I understood") + healthy / negation notes
+  'advisor.understood.title':  { en: 'What AMIS understood',  ms: 'Apa yang AMIS faham',  zh: 'AMIS 的理解' },
+  'advisor.understood.crop':   { en: 'Crop:',                  ms: 'Tanaman:',             zh: '作物:' },
+  'advisor.understood.problems': { en: 'Detected:',            ms: 'Dikesan:',             zh: '检测到:' },
+  'advisor.understood.env':    { en: 'Conditions:',            ms: 'Keadaan:',             zh: '环境:' },
+  'advisor.understood.ignored': { en: 'Ignored (you said these are absent):', ms: 'Diabaikan (anda kata tiada):', zh: '已忽略(您表示没有):' },
+  'advisor.understood.none':   { en: 'no specific symptom',    ms: 'tiada simptom khusus', zh: '无具体症状' },
+  'advisor.understood.check': {
+    en: 'Check this matches what you see in the field before acting. If anything is wrong, rephrase or use the tap picker.',
+    ms: 'Pastikan ini sepadan dengan apa yang anda lihat di ladang sebelum bertindak. Jika ada yang salah, ubah ayat atau gunakan pemilih ketik.',
+    zh: '采取行动前,请确认这与您在田间看到的情况一致。如有不符,请重新描述或使用点选模式。'
+  },
+  'advisor.healthy.title':     { en: '✅ No symptoms detected — no treatment needed', ms: '✅ Tiada simptom dikesan — tiada rawatan diperlukan', zh: '✅ 未检测到症状 — 无需治疗' },
+  'advisor.healthy.body': {
+    en: 'You described the crop as healthy and no problem symptom remained after removing the ones you said are absent. The list below is <strong>optional preventive maintenance</strong>, not a treatment. Keep monitoring and come back if symptoms appear.',
+    ms: 'Anda menyatakan tanaman sihat dan tiada simptom masalah selepas membuang yang anda kata tiada. Senarai di bawah ialah <strong>penyelenggaraan pencegahan pilihan</strong>, bukan rawatan. Teruskan pemantauan dan kembali jika simptom muncul.',
+    zh: '您表示作物健康,去除您说没有的症状后未发现任何问题。下列内容仅为<strong>可选的预防性养护</strong>,并非治疗。请持续观察,如出现症状再来查询。'
+  },
+  'advisor.zhHint': {
+    en: 'Tip: Chinese text is matched against a limited keyword list offline. If the crop or symptom was not recognised, use the tap picker for a precise diagnosis.',
+    ms: 'Petua: Teks Cina dipadankan dengan senarai kata kunci terhad semasa luar talian. Jika tanaman atau simptom tidak dikenal pasti, gunakan pemilih ketik.',
+    zh: '提示:离线模式下中文仅按有限关键词匹配。如未识别出作物或症状,请使用点选模式以获得准确诊断。'
+  },
+  'advisor.rec.moreReasons':   { en: 'More reasons ({n})',       ms: 'Lagi sebab ({n})',     zh: '更多理由({n})' },
+  'advisor.rec.showDosage':    { en: '📐 Dosage plan — tap to expand', ms: '📐 Pelan dos — ketik untuk buka', zh: '📐 用量方案 — 点击展开' },
 
   // Synergy pair callouts
   'advisor.pairs.title':       { en: '✨ Best combinations from your top picks', ms: '✨ Gabungan terbaik daripada pilihan utama anda', zh: '✨ 您的首选中的最佳组合' },
@@ -17334,6 +17483,53 @@ const METHOD_FITNESS = {
   }
 };
 
+// ── Organism-specific method fitness ──
+// METHOD_FITNESS is keyed by broad class (all "bacteria" share one table,
+// which marks foliar as PRIMARY). That contradicted organism profiles — e.g.
+// Azospirillum brasilense lists seed inoculation / root dipping /
+// fertigation and no foliar use. getMethodFitnessTable() layers the
+// microbe's own `application` list on top of the class defaults:
+//   • the first profile-listed method the class allows becomes PRIMARY
+//   • other profile-listed methods are "fits" (or stay "rare")
+//   • methods the profile does NOT list drop to "rare" with a note
+//   • class-level "no" (biologically impossible) is never overridden
+const METHOD_NOT_IN_PROFILE_NOTE = 'Not listed in this organism\'s application profile — use only if your product label supports it';
+function mapApplicationToMethod(app) {
+  const a = String(app || '').toLowerCase();
+  if (/seed|sett/.test(a)) return 'seed';
+  if (/fertigation|drip/.test(a)) return 'fertigation';
+  if (/foliar/.test(a)) return 'foliar';
+  if (/soil|root|transplant|nursery|furrow|ratoon|granular|compost|amendment|flooded|paddy|azolla|bokashi/.test(a)) return 'soil';
+  return null; // trunk injection, post-harvest, water treatment, fermentation…
+}
+const _amisFitnessCache = {};
+function getMethodFitnessTable(microbe) {
+  const key = getTargetKey(microbe);
+  const base = METHOD_FITNESS[key];
+  if (!base) return {};
+  const apps = (microbe && Array.isArray(microbe.application)) ? microbe.application : [];
+  const cacheKey = key + '|' + apps.join('|');
+  if (_amisFitnessCache[cacheKey]) return _amisFitnessCache[cacheKey];
+  const listed = [];
+  apps.forEach(function(a) {
+    const m = mapApplicationToMethod(a);
+    if (m && listed.indexOf(m) === -1) listed.push(m);
+  });
+  if (listed.length === 0) return (_amisFitnessCache[cacheKey] = base);
+  const usable = function(m) { return base[m] && base[m].fitness !== 'no'; };
+  const primary = listed.find(function(m) { return usable(m) && base[m].fitness !== 'rare'; })
+               || listed.find(usable);
+  const out = {};
+  Object.keys(base).forEach(function(m) {
+    const cfg = base[m];
+    if (cfg.fitness === 'no') { out[m] = cfg; return; }
+    if (m === primary) out[m] = Object.assign({}, cfg, { fitness: 'primary' });
+    else if (listed.indexOf(m) !== -1) out[m] = Object.assign({}, cfg, { fitness: cfg.fitness === 'rare' ? 'rare' : 'fits' });
+    else out[m] = Object.assign({}, cfg, { fitness: 'rare', note: METHOD_NOT_IN_PROFILE_NOTE });
+  });
+  return (_amisFitnessCache[cacheKey] = out);
+}
+
 const METHOD_LABELS = {
   soil:        { name: 'Soil drench',   icon: '💧', short: 'Soil' },
   foliar:      { name: 'Foliar spray',  icon: '🌿', short: 'Foliar' },
@@ -17372,9 +17568,8 @@ function toggleMethodFilter(method) {
 function microbeMatchesMethodFilter(microbe) {
   // If user has deselected everything, treat as "no filter"
   if (dosageMethodFilter.size === 0) return true;
-  const key = getTargetKey(microbe);
-  const cls = METHOD_FITNESS[key];
-  if (!cls) return true; // unknown class — let it through
+  const cls = getMethodFitnessTable(microbe);
+  if (!cls || Object.keys(cls).length === 0) return true; // unknown class — let it through
   for (const method of dosageMethodFilter) {
     const cfg = cls[method];
     if (cfg && cfg.fitness !== 'no') return true;
@@ -17487,7 +17682,10 @@ function setPressureMode(m) {
 function resetPressureMode() {
   setPressureMode('standard');
 }
-let dosageView = "detailed"; // "detailed" | "all" | "primary"
+// Default "primary" (Best only): one applicable method per recommendation
+// keeps results readable on a phone. Detailed / Compact remain one tap away
+// and the farmer's choice is remembered.
+let dosageView = "primary"; // "detailed" | "all" | "primary"
 
 function setCfuUnit(u) {
   cfuUnit = u;
@@ -20633,8 +20831,10 @@ function formatMass(grams) {
 //   perAppDisplay, waterDisplay, freqDisplay, seasonDisplay, note,
 //   source: string              // honest grounding for the rate
 // }
-function computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks) {
-  const cls = METHOD_FITNESS[microbeKey];
+function computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe) {
+  // Pass `microbe` so the organism's own application profile decides
+  // fitness; without it we fall back to the class-level defaults.
+  const cls = microbe ? getMethodFitnessTable(microbe) : METHOD_FITNESS[microbeKey];
   if (!cls || !cls[method]) return { ok: false };
   const cfg = cls[method];
   if (cfg.fitness === 'no') return { ok: false, fitness: 'no', note: translateMethodFitnessNote(cfg.note) };
@@ -21223,7 +21423,7 @@ function renderSeedPanel(d, panel) {
 // Build the detailed view — auto-show only compatible methods
 function buildDosageDetailed(microbe, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks) {
   const microbeKey = getTargetKey(microbe);
-  const cls = METHOD_FITNESS[microbeKey] || {};
+  const cls = getMethodFitnessTable(microbe);
   const out = [];
 
   // Process methods in order: foliar, soil, drip, seed
@@ -21231,7 +21431,7 @@ function buildDosageDetailed(microbe, areaAcres, productCfuPerUnit, isLiquid, pr
   for (const method of order) {
     const fit = cls[method] ? cls[method].fitness : 'no';
     if (fit === 'no') continue; // hide unsuitable methods entirely
-    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
     if (!d.ok) continue;
 
     // 'rare' methods get a visible amber notice but are still rendered
@@ -21291,7 +21491,7 @@ function buildDosageGrid(microbe, areaAcres, productCfuPerUnit, isLiquid, progra
 
   const microbeKey = getTargetKey(microbe);
   const methods = ['soil', 'foliar', 'fertigation', 'seed'];
-  const cls = METHOD_FITNESS[microbeKey] || {};
+  const cls = getMethodFitnessTable(microbe);
 
   // Helper: pull a method's icon (language-agnostic) + localised name/short
   // text. The icon stays in METHOD_LABELS; name/short flow through t().
@@ -21316,7 +21516,7 @@ function buildDosageGrid(microbe, areaAcres, productCfuPerUnit, isLiquid, progra
     if (!primaryMethod) {
       return "<div style='font-size:12px; color:var(--muted); padding:8px 10px; background:var(--bg); border-radius:6px'>" + t('dosage.noPrimary') + "</div>";
     }
-    const d = computeMethodDosage(microbeKey, primaryMethod, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+    const d = computeMethodDosage(microbeKey, primaryMethod, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
     if (!d.ok) return "";
     const methodActionRow = (microbe.id != null) ? _amisMethodActionRow(microbe.id, primaryMethod) : '';
     return "<div style='margin-top:8px; padding:10px 12px; background:var(--accent-light); border:1px solid var(--accent-mid); border-radius:8px; font-size:11.5px; line-height:1.8'>"
@@ -21332,7 +21532,7 @@ function buildDosageGrid(microbe, areaAcres, productCfuPerUnit, isLiquid, progra
 
   // All-methods view: compact 2x2 grid
   const cells = methods.map(function(method) {
-    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
     const fit = cls[method] ? cls[method].fitness : 'no';
     const fitInfo = fitLabel(fit);
 
@@ -21514,11 +21714,11 @@ function sortApplicationsForContext(applications, parsedProblems) {
 function buildSingleMethodDosageMessage(microbe, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, sizeRaw, unitLabel) {
   const lines = [];
   const microbeKey = getTargetKey(microbe);
-  const cls = METHOD_FITNESS[microbeKey] || {};
+  const cls = getMethodFitnessTable(microbe);
   const fit = (cls[method] && cls[method].fitness) || 'no';
   const ml = METHOD_LABELS[method];
   if (!ml) return '';
-  const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+  const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
 
   // Header — just the microbe and the method, in plain language
   lines.push('🦠 ' + microbe.name);
@@ -21721,7 +21921,7 @@ function _amisMethodActionRow(microbeId, method) {
 function buildDosageMessage(microbe, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, sizeRaw, unitLabel, parsedProblems) {
   const lines = [];
   const microbeKey = getTargetKey(microbe);
-  const cls = METHOD_FITNESS[microbeKey] || {};
+  const cls = getMethodFitnessTable(microbe);
 
   // Header — microbe name only
   lines.push('🦠 ' + microbe.name);
@@ -21744,7 +21944,7 @@ function buildDosageMessage(microbe, areaAcres, productCfuPerUnit, isLiquid, pro
   for (let j = 0; j < sortedMethods.length; j++) {
     const m = sortedMethods[j];
     if (m === 'foliar' && (cls[m] && cls[m].fitness) !== 'no') {
-      const fd = computeMethodDosage(microbeKey, m, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+      const fd = computeMethodDosage(microbeKey, m, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
       if (fd.ok && typeof computeFoliarPanel === 'function') {
         const fp = computeFoliarPanel(fd, areaAcres);
         if (fp && fp.tankCapacity > 0) foliarTankL = fp.tankCapacity;
@@ -21768,7 +21968,7 @@ function buildDosageMessage(microbe, areaAcres, productCfuPerUnit, isLiquid, pro
     const method = sortedMethods[i];
     const fit = (cls[method] && cls[method].fitness) || 'no';
     if (fit === 'no') continue;
-    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+    const d = computeMethodDosage(microbeKey, method, areaAcres, productCfuPerUnit, isLiquid, programmeWeeks, microbe);
     if (!d.ok) continue;
     const ml = METHOD_LABELS[method];
     // Translate method name via t('dosage.method.<m>') (defined in earlier
@@ -21920,7 +22120,7 @@ function shareRecDosageViaWA(microbeId) {
   openWAPreviewWithText(ctx.text, ctx.microbe.name + ' — ' + t('toast.dosage.subjectLine'));
 }
 
-function buildRecItem(r, i, parsedProblems) {
+function buildRecItem(r, i, parsedProblems, collapseAll) {
   const sizeAcres = getFarmSizeAcres();
   const sizeRaw = parseFloat(document.getElementById("farmSize") && document.getElementById("farmSize").value) || 1;
   const programmeWeeks = parseInt(document.getElementById("programmeWeeks") && document.getElementById("programmeWeeks").value) || 52;
@@ -21935,10 +22135,26 @@ function buildRecItem(r, i, parsedProblems) {
     : t('advisor.unit.acre');
   const displayArea = sizeRaw + " " + unitLabel;
 
-  const dosageHtml = "<div style='margin-top:10px; padding:9px 10px; background:#f0faf0; border-radius:8px; border:1px solid var(--border)'>"
-    + "<div style='font-size:12px; font-weight:700; color:var(--accent); margin-bottom:2px'>" + t('advisor.rec.dosagePlan', { area: displayArea, weeks: programmeWeeks }) + "</div>"
-    + buildDosageGrid(r.microbe, sizeAcres, productCfuPerUnit, isLiquid, programmeWeeks)
-    + "</div>";
+  // Only the top recommendation shows its dosage plan expanded; the rest
+  // collapse behind a <details> toggle so a phone screen isn't a wall of
+  // calculations.
+  const dosageInner = "<div style='font-size:12px; font-weight:700; color:var(--accent); margin-bottom:2px'>" + t('advisor.rec.dosagePlan', { area: displayArea, weeks: programmeWeeks }) + "</div>"
+    + buildDosageGrid(r.microbe, sizeAcres, productCfuPerUnit, isLiquid, programmeWeeks);
+  const dosageHtml = (i === 0 && !collapseAll)
+    ? "<div style='margin-top:10px; padding:9px 10px; background:#f0faf0; border-radius:8px; border:1px solid var(--border)'>" + dosageInner + "</div>"
+    : "<details style='margin-top:10px; padding:9px 10px; background:#f0faf0; border-radius:8px; border:1px solid var(--border)'>"
+      + "<summary style='font-size:12px; font-weight:700; color:var(--accent); cursor:pointer'>" + t('advisor.rec.showDosage') + "</summary>"
+      + dosageInner + "</details>";
+
+  // Reasoning: show the top two reasons, tuck the rest behind a toggle.
+  const reasonSegs = String(r.reasoning || '').split('; ').filter(Boolean);
+  const reasonSep = getLocale && getLocale() === 'zh' ? ';' : '; ';
+  const reasoningHtml = reasonSegs.length <= 2
+    ? translateScoreDesc(r.reasoning)
+    : translateScoreDesc(reasonSegs.slice(0, 2).join('; '))
+      + "<details style='margin-top:4px'><summary style='font-size:11px; color:var(--muted); cursor:pointer'>"
+      + t('advisor.rec.moreReasons', { n: reasonSegs.length - 2 }) + "</summary>"
+      + translateScoreDesc(reasonSegs.slice(2).join('; ')).split(reasonSep).join('<br>') + "</details>";
 
   // ── Tier 1B: Surface avoid_with from Library data ──
   // Display values get translated via translateAvoidWith() so non-English
@@ -22021,7 +22237,7 @@ function buildRecItem(r, i, parsedProblems) {
     + "</div>"
     + "<span class='rec-score'>" + t('advisor.rec.score') + " " + r.score + "</span>"
     + "</div>"
-    + "<div class='rec-reasoning'>" + translateScoreDesc(r.reasoning) + "</div>"
+    + "<div class='rec-reasoning'>" + reasoningHtml + "</div>"
     + (r.microbe.safety_warning
       ? "<div style='margin-top:8px; padding:10px 12px; background:#fee2e2; border:1.5px solid #fca5a5; border-radius:6px; font-size:12px; color:#991b1b; line-height:1.5'><strong>" + t('advisor.rec.safety') + "</strong> " + r.microbe.safety_warning + "</div>"
       : "")
@@ -22037,6 +22253,68 @@ function buildRecItem(r, i, parsedProblems) {
     + dosageHtml
     + actionsHtml
     + "</div>";
+}
+
+// Human-readable labels for parsed problem / environment tags (UI echo).
+const AMIS_TAG_LABELS = {
+  root_rot: { en: 'root rot', ms: 'reput akar', zh: '根腐' },
+  nitrogen_deficiency: { en: 'possible nitrogen deficiency', ms: 'kemungkinan kekurangan nitrogen', zh: '可能缺氮' },
+  phosphate_deficiency: { en: 'phosphorus deficiency', ms: 'kekurangan fosforus', zh: '缺磷' },
+  potassium_deficiency: { en: 'potassium deficiency', ms: 'kekurangan kalium', zh: '缺钾' },
+  magnesium_deficiency: { en: 'magnesium deficiency', ms: 'kekurangan magnesium', zh: '缺镁' },
+  iron_deficiency: { en: 'iron deficiency', ms: 'kekurangan besi', zh: '缺铁' },
+  sulphur_deficiency: { en: 'sulphur deficiency', ms: 'kekurangan sulfur', zh: '缺硫' },
+  foliar_fungal: { en: 'leaf fungal disease', ms: 'penyakit kulat daun', zh: '叶部真菌病' },
+  fusarium: { en: 'wilt / Fusarium', ms: 'layu / Fusarium', zh: '枯萎 / 镰刀菌' },
+  nematode: { en: 'nematodes', ms: 'nematod', zh: '线虫' },
+  insect: { en: 'insect pests', ms: 'serangga perosak', zh: '虫害' },
+  viral_disease: { en: 'viral disease', ms: 'penyakit virus', zh: '病毒病' },
+  tree_root_disease: { en: 'tree root disease', ms: 'penyakit akar pokok', zh: '树木根病' },
+  panicle_blight: { en: 'flower / panicle problem', ms: 'masalah bunga / tangkai', zh: '花穗问题' },
+  fruit_cracking: { en: 'fruit cracking', ms: 'buah retak', zh: '裂果' },
+  sunscald: { en: 'sunscald', ms: 'terbakar matahari', zh: '日灼' },
+  salinity_stress: { en: 'salinity stress', ms: 'tekanan kemasinan', zh: '盐害' },
+  establishment: { en: 'new planting / establishment', ms: 'penanaman baharu', zh: '新植 / 定植' },
+  soil_improvement: { en: 'soil improvement', ms: 'penambahbaikan tanah', zh: '土壤改良' },
+  wet: { en: 'wet / waterlogged', ms: 'basah / bertakung air', zh: '潮湿 / 积水' },
+  hot_dry: { en: 'hot / dry', ms: 'panas / kering', zh: '炎热 / 干旱' },
+  cool: { en: 'cool highland', ms: 'tanah tinggi sejuk', zh: '凉爽高地' },
+  saline: { en: 'saline / coastal', ms: 'masin / pesisir', zh: '盐碱 / 沿海' },
+  peat: { en: 'peat soil', ms: 'tanah gambut', zh: '泥炭土' },
+  contaminated: { en: 'contaminated soil', ms: 'tanah tercemar', zh: '污染土壤' }
+};
+function amisTagLabel(tag) {
+  const loc = (typeof getLocale === 'function') ? getLocale() : 'en';
+  const e = AMIS_TAG_LABELS[tag];
+  return e ? (e[loc] || e.en) : String(tag).replace(/_/g, ' ');
+}
+
+// "What AMIS understood" strip — lets the farmer confirm the detected
+// symptoms (and see which ones were ignored as negated) before acting.
+// All user-derived text goes through _amisEscapeHtml.
+function buildUnderstoodBlock(parsed) {
+  const esc = _amisEscapeHtml;
+  const problems = (Array.isArray(parsed.problem) ? parsed.problem : [])
+    .filter(function(p) { return p !== 'general_stress'; });
+  const envs = Array.isArray(parsed.environment) ? parsed.environment : [];
+  const negated = Array.isArray(parsed.negated) ? parsed.negated : [];
+  const cropLabel = (parsed.crop && parsed.crop !== 'general')
+    ? ((typeof getCropLabel === 'function') ? getCropLabel(parsed.crop) : parsed.crop)
+    : '—';
+  let html = '<div style="margin:10px 0; padding:9px 11px; background:var(--bg); border:1px solid var(--border); border-radius:8px; font-size:12px; line-height:1.6">'
+    + '<div style="font-weight:700; color:var(--text); margin-bottom:4px">' + t('advisor.understood.title') + '</div>'
+    + '<div><strong>' + t('advisor.understood.crop') + '</strong> ' + esc(cropLabel) + '</div>'
+    + '<div><strong>' + t('advisor.understood.problems') + '</strong> '
+    +   (problems.length ? problems.map(function(p) { return esc(amisTagLabel(p)); }).join(', ') : t('advisor.understood.none')) + '</div>';
+  if (envs.length) {
+    html += '<div><strong>' + t('advisor.understood.env') + '</strong> ' + envs.map(function(e) { return esc(amisTagLabel(e)); }).join(', ') + '</div>';
+  }
+  if (negated.length) {
+    html += '<div style="color:var(--muted)"><strong>' + t('advisor.understood.ignored') + '</strong> '
+      + negated.map(function(n) { return '<s>' + esc(n) + '</s>'; }).join(', ') + '</div>';
+  }
+  html += '<div style="margin-top:4px; font-size:11px; color:var(--muted)">' + t('advisor.understood.check') + '</div>';
+  return html + '</div>';
 }
 
 function renderResult(result) {
@@ -22071,7 +22349,7 @@ function renderResult(result) {
       + '<div style="font-size:11.5px; color:var(--text-secondary); line-height:1.6; margin-top:8px">' + t('advisor.empty.hint') + '</div>'
       + '</div>';
   } else {
-    recsHtml = ranked.map((r, i) => buildRecItem(r, i, parsed.problem)).join('');
+    recsHtml = ranked.map((r, i) => buildRecItem(r, i, parsed.problem, !!parsed.healthy)).join('');
   }
 
   // Filter notice if some were hidden but not all
@@ -22093,7 +22371,20 @@ function renderResult(result) {
     && parsed.problem.length === 1
     && parsed.problem[0] === 'general_stress'
     && (!parsed.environment || parsed.environment.length === 0);
-  const lowConfidenceNote = isLowConfidence
+  const healthyNote = parsed.healthy
+    ? '<div style="margin:10px 0; padding:10px 12px; background:var(--accent-light); border:1.5px solid var(--accent-mid); border-radius:8px; font-size:12px; color:var(--text); line-height:1.6">'
+      + '<strong style="color:var(--accent)">' + t('advisor.healthy.title') + '</strong><br>'
+      + t('advisor.healthy.body')
+      + '</div>'
+    : '';
+  // Chinese query that the keyword bridge could not resolve → point the
+  // farmer to the translated tap picker.
+  const zhUnresolved = /[\u4e00-\u9fff]/.test(window.__amisLastQuery || '')
+    && (parsed.crop === 'general' || isLowConfidence);
+  const zhHint = zhUnresolved
+    ? '<div style="margin:10px 0; padding:9px 11px; background:#fef9ec; border:1px solid #fcd34d; border-radius:8px; font-size:11.5px; color:#92400e; line-height:1.55">' + t('advisor.zhHint') + '</div>'
+    : '';
+  const lowConfidenceNote = (isLowConfidence && !parsed.healthy)
     ? '<div style="margin:10px 0; padding:9px 11px; background:#fef9ec; border:1px solid #fcd34d; border-radius:8px; font-size:11.5px; color:#92400e; line-height:1.55">'
       + '<strong>' + t('advisor.lowConfidence.title') + '</strong><br>'
       + t('advisor.lowConfidence.body')
@@ -22139,7 +22430,10 @@ function renderResult(result) {
         <button class="modal-export-btn" id="advisorXlsxBtn" onclick="exportAdvisorXlsx(this)" title="${t('common.export.excel.title')}">${t('common.export.excel')}</button>
       </div>
     </div>
-    ${parsed.summary ? `<div style="font-size:14px; color:var(--text); line-height:1.6; margin-bottom:14px; padding:12px; background:#f0faf0; border-radius:8px; border:1px solid var(--border)">${parsed.summary}</div>` : ''}
+    ${parsed.summary ? `<div style="font-size:14px; color:var(--text); line-height:1.6; margin-bottom:14px; padding:12px; background:#f0faf0; border-radius:8px; border:1px solid var(--border)">${_amisEscapeHtml(parsed.summary)}</div>` : ''}
+    ${healthyNote}
+    ${buildUnderstoodBlock(parsed)}
+    ${zhHint}
     ${lowConfidenceNote}
     <div class="detail-label" style="margin-bottom:10px">${t('advisor.ranked')}</div>
     ${filterNotice}
@@ -26086,7 +26380,13 @@ function updatePickerPreview() {
     return;
   }
   preview.classList.remove('empty');
-  preview.innerHTML = '<strong>' + t('advisor.picker.queryPrefix') + '</strong> ' + txt;
+  // Build with DOM nodes — txt can contain free text from the "Other crop"
+  // input, so it must never be parsed as HTML.
+  preview.textContent = '';
+  const strong = document.createElement('strong');
+  strong.textContent = t('advisor.picker.queryPrefix');
+  preview.appendChild(strong);
+  preview.appendChild(document.createTextNode(' ' + txt));
   // Mirror into the textarea so runAdvisor reads the same content
   const input = document.getElementById('queryInput');
   input.value = txt;
@@ -30132,10 +30432,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Dosage view preference
     const savedDosageView = amisStore.get("dosage_view");
-    if (savedDosageView === "primary" || savedDosageView === "all") {
-      // Defer until DOM has the buttons
-      setTimeout(function() { setDosageView(savedDosageView); }, 50);
-    }
+    // Defer until DOM has the buttons; always call so button styling
+    // matches the default when nothing is saved.
+    const initialView = (savedDosageView === "detailed" || savedDosageView === "all") ? savedDosageView : "primary";
+    setTimeout(function() { setDosageView(initialView); }, 50);
 
     // Symptom Picker — restore mode preference only.
     // Crop / symptoms / environment selections are intentionally NOT persisted:
