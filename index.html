@@ -4587,6 +4587,21 @@ const STRINGS = {
 // Format a translation key with parameters. Resolves plural category via
 // Intl.PluralRules when params.count is provided. Falls back gracefully:
 // missing locale → 'en'; missing category → 'other'; missing key → returns key.
+// ── LIFESTYLE / TRICHODERMA FOLIAR HELPERS ──
+// lifestyle: 'soil_saprophyte' | 'root_associated' | 'facultative_endophyte'.
+// Set on a microbe (species-typical default) and optionally on a strain
+// (overrides the species value only where the strain itself is documented).
+function lifestyleLabel(v) { return v ? t('lifestyle.' + v) : ''; }
+function strainLifestyle(m, s) {
+  if (s && s.lifestyle) return { value: s.lifestyle, inherited: false };
+  if (m && m.lifestyle) return { value: m.lifestyle, inherited: true };
+  return null;
+}
+function needsTrichoFoliarNote(m) {
+  return !!(m && m.genus === 'Trichoderma' && Array.isArray(m.application)
+    && m.application.some(function(a) { return /foliar|spray/i.test(a); }));
+}
+
 function t(key, params) {
   params = params || {};
   // Plural keys take precedence (via PLURAL_FORMS), then non-plural STRINGS.
@@ -4725,7 +4740,7 @@ const amisStore = (function() {
 
 const MICROBES = [
   // ── TRICHODERMA ──
-  { id:1, name:"Trichoderma harzianum",documentedCrops:["banana","cassava","cocoa","coconut","cucumber","dragon fruit","durian","guava","jackfruit","lime","longan","lychee","mangosteen","palm","passion fruit","pineapple","pomelo","rambutan","rubber","soursop","sweet potato","watermelon"], latin:"Trichoderma harzianum", type:"Fungi", genus:"Trichoderma",
+  { id:1, name:"Trichoderma harzianum",documentedCrops:["banana","cassava","cocoa","coconut","cucumber","dragon fruit","durian","guava","jackfruit","lime","longan","lychee","mangosteen","palm","passion fruit","pineapple","pomelo","rambutan","rubber","soursop","sweet potato","watermelon"], latin:"Trichoderma harzianum", type:"Fungi", genus:"Trichoderma", lifestyle:"root_associated",
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Hypocreaceae"}, functions:["antifungal","biocontrol","root","pgpr"],
     benefits:["Root rot suppression","Fusarium antagonist","Soil enzyme stimulation","Mycoparasitism of pathogens"],
     application:["Foliar spray","Soil drench","Seed coating","Compost inoculant"],
@@ -4734,9 +4749,9 @@ const MICROBES = [
     soil_survival_days:90, leaf_survival_hours:48,
     shelf_life:{liquid:"6 months",powder:"12 months",freeze_dried:"24 months"},
     shelf_life_opened:{liquid:"2 months",powder:"4 months"},shelf_life_diluted_hours:24,storage_conditions:"Cool dark dry place. Avoid direct sunlight.",fermentation:{type:"solid",temp:"25–28°C",ph:"5.5–6.5",duration:"5–7 days",medium:"Rice bran / wheat bran"},drying_method:"sun_dry",carrier:"Talc / peat", propagation_category:"farm_propagate",activation_method:"Dissolve powder in water, or dilute liquid per label rate. Apply immediately or within 2 hours.",propagation_method:"SSF on cooked rice or wheat bran: mix 1g commercial Trichoderma powder per 500g cooked (cooled) rice or moistened wheat bran. Spread 3–5cm on tray, cover with breathable cloth, incubate in shade at 25–30°C for 5–7 days. White mycelium first → bright green conidia = ready. Shade-dry to ≤10% moisture. Store in paper bag up to 2 months. Apply 200–500g per planting hole or dissolve in water for drench.",propagation_difficulty:"moderate",propagation_gram_type:"fungi", viability_rate:"≥80%",shelf_life_temps:{c4:"18 months",c25:"12 months",c35:"6 months",c45:"2 months"}, propagation_notes:"T. harzianum is the most robust Trichoderma for farm SSF — fastest coloniser, tolerates temperature variation, produces highest conidia density on rice/bran substrate. Green colour = conidia ready. Black patches = Aspergillus contamination, discard batch. Can also be grown on sawdust + bran (70:30) for larger volume. Farm SSF produces viable product comparable to commercial WP at a fraction of the cost.", storage_temp:"<25°C", colonisation:"strong", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"soil", repro_speed:"medium", pesticide_compat:"caution", notes:"Trichoderma spores are stable — simply dilute and apply. No fermentation needed. Shelf-stable at room temp. · Best applied in early morning. Avoid direct sunlight post-application.",
-    strains:[{id:"T-22",product:"RootShield/PlantShield",company:"BioWorks",notes:"Best-studied; strong rhizosphere coloniser"},{id:"T-39",product:"Trichodex",company:"Makhteshim",notes:"Registered for Botrytis on grapes"},{id:"ICC 012",product:"Trianum-P",company:"Koppert",notes:"EAMU-approved; powder formulation"},{id:"ATCC 20476",product:"—",company:"Culture collection ref.",notes:"Reference strain for research"}] },
+    strains:[{id:"T-22",product:"RootShield/PlantShield",company:"BioWorks",lifestyle:"root_associated",notes:"Best-studied; strong rhizosphere coloniser"},{id:"T-39",product:"Trichodex",company:"Makhteshim",notes:"Registered for Botrytis on grapes"},{id:"ICC 012",product:"Trianum-P",company:"Koppert",notes:"EAMU-approved; powder formulation"},{id:"ATCC 20476",product:"—",company:"Culture collection ref.",notes:"Reference strain for research"}] },
 
-  { id:2, name:"Trichoderma viride", latin:"Trichoderma viride", type:"Fungi", genus:"Trichoderma",
+  { id:2, name:"Trichoderma viride", latin:"Trichoderma viride", type:"Fungi", genus:"Trichoderma", lifestyle:"soil_saprophyte",
     documentedCrops:["banana","cassava","corn","cucumber","durian","guava","maize","mango","papaya","soursop","sweet potato","tomato","watermelon"],
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Hypocreaceae"}, functions:["antifungal","biocontrol","compost_activator"],
     benefits:["Cellulase producer","Pythium suppression","Organic matter decomposition"],
@@ -4748,7 +4763,7 @@ const MICROBES = [
     shelf_life_opened:{liquid:"2 months",powder:"4 months"},shelf_life_diluted_hours:24,storage_conditions:"Cool dark dry place. Avoid direct sunlight.",fermentation:{type:"solid",temp:"22–25°C",ph:"5.0–6.0",duration:"5–7 days",medium:"Wheat bran / corn meal"},drying_method:"sun_dry",carrier:"Talc / peat", propagation_category:"farm_propagate",activation_method:"Dissolve in water. Apply immediately or within 2 hours.",propagation_method:"SSF on wheat bran or rice bran: same protocol as T. harzianum. T. viride produces blue-green conidia (darker than T. harzianum). Incubate 5–7 days at 22–27°C. Grows slightly slower than T. harzianum — allow extra 1–2 days if growth is slow.",propagation_difficulty:"moderate",propagation_gram_type:"fungi", viability_rate:"≥75%",shelf_life_temps:{c4:"14 months",c25:"10 months",c35:"5 months",c45:"2 months"}, propagation_notes:"T. viride is reliable for farm SSF but performs best at slightly cooler temperatures than T. harzianum. Stronger cellulose-degrading activity — ideal for compost inoculant production. Petrichor/coconut smell during colonisation is normal and indicates healthy growth.", storage_temp:"<25°C", colonisation:"medium", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"soil", repro_speed:"medium", pesticide_compat:"caution", notes:"Same as T. harzianum. Ready after mixing with water. · Effective against Pythium and Rhizoctonia.",
     strains:[{id:"Tv-1",product:"Bioderma/TV",company:"Various Indian manufacturers",notes:"Most common commercial strain in Asia"},{id:"NRRL 13219",product:"—",company:"USDA-ARS culture ref.",notes:"Research reference strain"},{id:"G.v. 41-A",product:"Binab T",company:"Bio-Innovation AB",notes:"Combined T. viride + T. polysporum"}] },
 
-  { id:3, name:"Trichoderma asperellum", latin:"Trichoderma asperellum", type:"Fungi", genus:"Trichoderma",
+  { id:3, name:"Trichoderma asperellum", latin:"Trichoderma asperellum", type:"Fungi", genus:"Trichoderma", lifestyle:"root_associated",
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Hypocreaceae"}, functions:["antifungal","biocontrol","pgpr","stress_tolerance"],
     benefits:["ISR induction","Botrytis suppression","Root hair promotion"],
     application:["Foliar spray","Soil drench"],
@@ -4757,9 +4772,9 @@ const MICROBES = [
     soil_survival_days:75, leaf_survival_hours:36,
     shelf_life:{liquid:"5 months",powder:"14 months",freeze_dried:"24 months"},
     shelf_life_opened:{liquid:"2 months",powder:"4 months"},shelf_life_diluted_hours:24,storage_conditions:"Cool dark dry place. Avoid direct sunlight.",fermentation:{type:"solid",temp:"25–28°C",ph:"5.5–6.5",duration:"5–7 days",medium:"Rice bran / wheat bran"},drying_method:"sun_dry",carrier:"Talc / peat", propagation_category:"farm_propagate",activation_method:"Dilute in water. Can add small amount of humic acid as sticker for foliar application.",propagation_method:"SSF on rice grain or wheat bran: same protocol as T. harzianum. T. asperellum is well-suited to tropical temperatures — grows well at 28–32°C. Produces bright green conidia within 5–6 days. Excellent ISR inducer — apply to seedling roots for disease priming.",propagation_difficulty:"moderate",propagation_gram_type:"fungi", viability_rate:"≥80%",shelf_life_temps:{c4:"16 months",c25:"12 months",c35:"6 months",c45:"2 months"}, propagation_notes:"T. asperellum is increasingly preferred over T. harzianum for ISR (Induced Systemic Resistance) programs because it colonises roots more aggressively and triggers stronger SAR. Farm SSF viable. One limitation: ISR activity is strain-specific — only confirmed strains (T34, ICC012) provide documented ISR; farm-propagated material works as general biocontrol but ISR cannot be guaranteed.", storage_temp:"<25°C", colonisation:"strong", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"rhizosphere", repro_speed:"medium", pesticide_compat:"caution", notes:"ISR-inducing strain — apply preventively. No special prep. · Induces systemic resistance — excellent for preventive programs.",
-    strains:[{id:"T34",product:"Asperello T34 Biocontrol",company:"Biocontrol Technologies",notes:"EU-registered; ISR on tomato and pepper"},{id:"SKT-1",product:"Eco-Hope",company:"Sumitomo Chemical",notes:"Registered in Japan for soil-borne diseases"}] },
+    strains:[{id:"T34",product:"Asperello T34 Biocontrol",company:"Biocontrol Technologies",lifestyle:"root_associated",notes:"EU-registered; ISR on tomato and pepper"},{id:"SKT-1",product:"Eco-Hope",company:"Sumitomo Chemical",notes:"Registered in Japan for soil-borne diseases"}] },
 
-  { id:4, name:"Trichoderma atroviride", latin:"Trichoderma atroviride", type:"Fungi", genus:"Trichoderma", documentedCrops:["banana","chili","coconut","cucumber","durian","guava","lemongrass","lime","tomato","vegetable","watermelon"],
+  { id:4, name:"Trichoderma atroviride", latin:"Trichoderma atroviride", type:"Fungi", genus:"Trichoderma", lifestyle:"root_associated", documentedCrops:["banana","chili","coconut","cucumber","durian","guava","lemongrass","lime","tomato","vegetable","watermelon"],
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Hypocreaceae"}, functions:["antifungal","root","phytohormone"],
     benefits:["Root colonisation","Sclerotinia suppression","Auxin production"],
     application:["Seed treatment","Nursery drench"],
@@ -4770,7 +4785,7 @@ const MICROBES = [
     shelf_life_opened:{liquid:"2 months",powder:"4 months"},shelf_life_diluted_hours:24,storage_conditions:"Cool dark place. Sensitive to heat.",fermentation:{type:"solid",temp:"20–22°C",ph:"5.0–6.0",duration:"5–7 days",medium:"Wheat bran / corn meal"},drying_method:"sun_dry",carrier:"Peat moss", propagation_category:"ready_to_use",activation_method:"Dissolve in cool water. Sensitive to heat — do not use warm water.",propagation_method:null,propagation_difficulty:"easy",propagation_gram_type:"fungi", viability_rate:"≥75%",shelf_life_temps:{c4:"12 months",c25:"8 months",c35:"3 months",c45:"1 month"}, storage_temp:"<25°C", colonisation:"medium", avoid_with:["broad-spectrum fungicides","copper fungicides"], oxygen:"aerobic", source:"soil", repro_speed:"slow", pesticide_compat:"caution", notes:"Temperature-sensitive. Mix with cool water only. Apply to nursery/roots immediately. · Sensitive to high temperatures — ideal for nursery/highland crops.",
     strains:[{id:"I-1237",product:"Tenet",company:"Isagro",notes:"Registered against soil fungi in EU"},{id:"P1",product:"Primastop",company:"Verdera/Kemira",notes:"Finnish product; strong Sclerotinia activity"}] },
 
-  { id:5, name:"Trichoderma longibrachiatum", latin:"Trichoderma longibrachiatum", type:"Fungi", genus:"Trichoderma", documentedCrops:["banana","cassava","corn","guava","jackfruit","palm","pineapple","rubber","sugarcane"],
+  { id:5, name:"Trichoderma longibrachiatum", latin:"Trichoderma longibrachiatum", type:"Fungi", genus:"Trichoderma", lifestyle:"soil_saprophyte", documentedCrops:["banana","cassava","corn","guava","jackfruit","palm","pineapple","rubber","sugarcane"],
     taxonomy:{kingdom:"Fungi",phylum:"Ascomycota",order:"Hypocreales",family:"Hypocreaceae"}, functions:["antifungal","root","pgpr","nematode_control"],
     benefits:["High temperature tolerance","Nematode suppression","Cellulose digestion"],
     application:["Soil drench","Compost activator"],
@@ -13453,6 +13468,17 @@ Object.assign(STRINGS, {
   'modal.fieldNotes':          { en: 'Field Notes',                    ms: 'Nota Lapangan',               zh: '田间记录' },
   'modal.activationProp':      { en: '🌱 Activation & Propagation',    ms: '🌱 Pengaktifan & Pembiakan',  zh: '🌱 活化与扩繁' },
   'modal.strains':             { en: '🔬 Commercial Strains & Identifiers', ms: '🔬 Strain Komersial & Pengecam', zh: '🔬 商业菌株与标识符' },
+  'modal.lifestyle':           { en: '🌍 Lifestyle',                   ms: '🌍 Gaya Hidup',                zh: '🌍 生活方式' },
+  'lifestyle.soil_saprophyte': { en: 'Soil saprophyte',                ms: 'Saprofit tanah',               zh: '土壤腐生型' },
+  'lifestyle.root_associated': { en: 'Root-associated',                ms: 'Berkait akar',                 zh: '根际定殖型' },
+  'lifestyle.facultative_endophyte': { en: 'Facultative endophyte (above-ground tissue confirmed)', ms: 'Endofit fakultatif (tisu atas tanah disahkan)', zh: '兼性内生型（已确认可定殖地上组织）' },
+  'lifestyle.desc.soil_saprophyte': { en: 'Lives on dead organic matter in soil. Not documented to colonise living plant tissue.', ms: 'Hidup pada bahan organik mati dalam tanah. Tiada dokumentasi mengkolonisasi tisu tumbuhan hidup.', zh: '以土壤中的死亡有机质为生。未有定殖活体植物组织的记录。' },
+  'lifestyle.desc.root_associated': { en: 'Colonises roots and the rhizosphere. Above-ground (leaf/stem) colonisation not confirmed.', ms: 'Mengkolonisasi akar dan rizosfera. Kolonisasi atas tanah (daun/batang) belum disahkan.', zh: '定殖于根系及根际。未确认可定殖地上部（叶/茎）。' },
+  'lifestyle.desc.facultative_endophyte': { en: 'Can live freely in soil and also inside living plant tissue, with documented recovery from leaves or stems.', ms: 'Boleh hidup bebas dalam tanah dan juga di dalam tisu tumbuhan hidup, dengan rekod pemulihan dari daun atau batang.', zh: '既可在土壤中自由生活，也可生活于活体植物组织内，并有从叶或茎中重新分离的记录。' },
+  'lifestyle.speciesNote':     { en: 'Typical for this species — actual lifestyle is strain-dependent.', ms: 'Tipikal bagi spesies ini — gaya hidup sebenar bergantung pada strain.', zh: '此为该物种的典型特征 — 实际生活方式因菌株而异。' },
+  'lifestyle.speciesDefault':  { en: 'species typical',                ms: 'tipikal spesies',              zh: '物种典型' },
+  'tricho.foliarNote':         { en: 'Foliar efficacy is strain-dependent. Prefer strains with documented colonisation of above-ground tissue; soil-only strains act briefly and are UV-limited.', ms: 'Keberkesanan semburan daun bergantung pada strain. Utamakan strain yang terbukti mengkolonisasi tisu atas tanah; strain tanah sahaja bertindak sekejap dan terhad oleh UV.', zh: '叶面喷施效果因菌株而异。优先选择已证实可定殖地上组织的菌株；仅限土壤的菌株作用短暂，且易受紫外线限制。' },
+  'xlsx.strain.lifestyle':     { en: 'Lifestyle',                      ms: 'Gaya Hidup',                   zh: '生活方式' },
   'modal.uvProtection':        { en: '☀️ UV Protection Required',     ms: '☀️ Perlindungan UV Diperlukan',zh: '☀️ 需要紫外线保护' },
 
   // Resistance grid (UV / Heat / Drought / Salt — these become column headers)
@@ -17234,6 +17260,14 @@ function openModal(id) {
       html += '</div>';
       return html;
     })() : ''}
+    ${m.lifestyle ? `<div class="detail-section">
+      <div class="detail-label">${t('modal.lifestyle')}</div>
+      <div style="font-size:15px; font-weight:600; color:var(--text)">${lifestyleLabel(m.lifestyle)}</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6; margin-top:2px">${t('lifestyle.desc.' + m.lifestyle)} ${t('lifestyle.speciesNote')}</div>
+    </div>` : ''}
+    ${needsTrichoFoliarNote(m) ? `<div class="detail-section">
+      <div style="padding:10px 12px; background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:8px; font-size:13px; color:#1d4ed8; line-height:1.6">🌿 ${t('tricho.foliarNote')}</div>
+    </div>` : ''}
     ${m.strains && m.strains.length > 0 ? `<div class="detail-section">
       <div class="detail-label">${t('modal.strains')}</div>
       <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px">
@@ -17244,6 +17278,7 @@ function openModal(id) {
             ${s.product && s.product !== '—' ? `<span style="font-size:13px; font-weight:600; color:var(--text)">${s.product}</span>` : ''}
           </div>
           ${s.company ? `<div style="font-size:17px; color:var(--muted); margin-bottom:3px">📦 ${s.company}</div>` : ''}
+          ${(function(){ const ls = strainLifestyle(m, s); if (!ls) return ''; return `<div style="font-size:13px; color:var(--muted); margin-bottom:3px">🌍 ${lifestyleLabel(ls.value)}${ls.inherited ? ' (' + t('lifestyle.speciesDefault') + ')' : ''}</div>`; })()}
           ${s.notes ? `<div style="font-size:17px; font-weight:400; color:var(--text); line-height:1.75">${getStrainNoteText(s.notes)}</div>` : ''}
         </div>`).join('')}
       </div>
@@ -21749,6 +21784,7 @@ function buildSingleMethodDosageMessage(microbe, method, areaAcres, productCfuPe
                  : '';
     // Action recipe — bullets, plain language
     lines.push(ml.icon + ' ' + methodName.toUpperCase() + fitTag);
+    if (method === 'foliar' && microbe.genus === 'Trichoderma') lines.push('ℹ️ ' + t('tricho.foliarNote'));
 
     if (method === 'foliar') {
       // Foliar: per-tank action is the central instruction
@@ -21978,6 +22014,7 @@ function buildDosageMessage(microbe, areaAcres, productCfuPerUnit, isLiquid, pro
                  : fit === 'rare' ? t('dosageExport.fitTag.rare')
                  : '';
     lines.push(ml.icon + ' ' + methodName.toUpperCase() + fitTag);
+    if (method === 'foliar' && microbe.genus === 'Trichoderma') lines.push('ℹ️ ' + t('tricho.foliarNote'));
 
     // Method-specific bulleted action list
     if (method === 'foliar' && typeof computeFoliarPanel === 'function') {
@@ -22250,6 +22287,9 @@ function buildRecItem(r, i, parsedProblems, collapseAll) {
     + hintLine
     + avoidWith
     + uvTip
+    + (needsTrichoFoliarNote(r.microbe)
+        ? "<div style='margin-top:8px; padding:7px 10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; font-size:11.5px; color:#1d4ed8; line-height:1.5'>🌿 " + t('tricho.foliarNote') + "</div>"
+        : "")
     + dosageHtml
     + actionsHtml
     + "</div>";
@@ -26619,6 +26659,13 @@ function microbeToText(m, opts = {}) {
 
   // Strains — strain IDs, product names, company names stay verbatim
   // (they're proper nouns / SKUs). Only notes are translatable.
+  if (m.lifestyle) {
+    lines.push(`${B}${t('modal.lifestyle')}${B}`);
+    lines.push(`- ${lifestyleLabel(m.lifestyle)}: ${t('lifestyle.desc.' + m.lifestyle)}`);
+    lines.push(`  ${t('lifestyle.speciesNote')}`);
+    lines.push('');
+  }
+  if (needsTrichoFoliarNote(m)) { lines.push(`ℹ️ ${t('tricho.foliarNote')}`); lines.push(''); }
   if (m.strains && m.strains.length) {
     lines.push(`${B}${t('microbeExport.section.strains')}${B}`);
     m.strains.forEach(s => {
@@ -26626,6 +26673,8 @@ function microbeToText(m, opts = {}) {
       if (s.id) parts.push(s.id);
       if (s.product && s.product !== '—') parts.push(`(${s.product})`);
       if (s.company && s.company !== '—') parts.push(`- ${s.company}`);
+      const ls = strainLifestyle(m, s);
+      if (ls) parts.push(`[${lifestyleLabel(ls.value)}${ls.inherited ? ', ' + t('lifestyle.speciesDefault') : ''}]`);
       lines.push(`- ${parts.join(' ')}`);
       if (s.notes) lines.push(`  ${s.notes}`);
     });
@@ -26835,12 +26884,14 @@ async function exportMicrobeXlsx(id, btnEl) {
 
   // Strains sheet (separate, one row per strain)
   if (m.strains && m.strains.length) {
-    const strainData = [[t('xlsx.strain.id'), t('xlsx.strain.product'), t('xlsx.strain.company'), t('xlsx.col.notes')]];
+    const strainData = [[t('xlsx.strain.id'), t('xlsx.strain.product'), t('xlsx.strain.company'), t('xlsx.strain.lifestyle'), t('xlsx.col.notes')]];
     m.strains.forEach(s => {
-      strainData.push([s.id || '', s.product || '', s.company || '', s.notes || '']);
+      const ls = strainLifestyle(m, s);
+      const lsTxt = ls ? lifestyleLabel(ls.value) + (ls.inherited ? ' (' + t('lifestyle.speciesDefault') + ')' : '') : '';
+      strainData.push([s.id || '', s.product || '', s.company || '', lsTxt, s.notes || '']);
     });
     const wsStrains = XLSX.utils.aoa_to_sheet(strainData);
-    wsStrains['!cols'] = [{ wch: 22 }, { wch: 22 }, { wch: 28 }, { wch: 60 }];
+    wsStrains['!cols'] = [{ wch: 22 }, { wch: 22 }, { wch: 28 }, { wch: 30 }, { wch: 60 }];
     XLSX.utils.book_append_sheet(wb, wsStrains, t('xlsx.tab.strains'));
   }
 
@@ -27014,6 +27065,7 @@ function _amisAdvisorToText(opts = {}) {
     if (rec.reason) lines.push('   ' + t('advisorExport.rec.reason').replace('{v}', rec.reason));
     if (rec.reasons) lines.push('   ' + t('advisorExport.rec.reason').replace('{v}', rec.reasons));
     if (m.functions && m.functions.length) lines.push('   ' + t('advisorExport.rec.functions').replace('{v}', m.functions.join(', ')));
+    if (needsTrichoFoliarNote(m)) lines.push('   ℹ️ ' + t('tricho.foliarNote'));
     
     // UV PROTECTION — Check each recommendation
     const uvRes = m.uv_resistance;
