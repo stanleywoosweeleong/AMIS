@@ -5070,7 +5070,7 @@ const MICROBES = [
     functions:["biocontrol","phosphate"],
     benefits:["Pyocyanin antibiotic","Strong siderophore","Rhizoctonia suppression"],
     application:["Soil drench only"],
-    safety_warning:"SOIL APPLICATION ONLY — Not for foliar spray. Opportunistic human pathogen. Do not use on leafy vegetables eaten raw.",
+    safety_warning:"Opportunistic human pathogen (BSL-2). Use only registered products — never brew or multiply it at home. Soil drench only — never spray on leaves or food crops, and never use on leafy vegetables eaten raw. Wear gloves and eye protection; cover any cuts first. People with weak immunity, lung disease (e.g. cystic fibrosis) or open wounds should not handle it. See a doctor if a wound or eye becomes red or swollen after use.",
     uv_resistance:"medium", heat_resistance:"medium", drought_resistance:"medium", salt_resistance:"medium",
     temp:{min:15,opt:37,max:42}, ph:{min:4.5,opt:7.0,max:9.0},
     soil_survival_days:90, leaf_survival_hours:48,
@@ -6190,6 +6190,10 @@ const MICROBE_I18N = {
     propagation_method: {
       ms: "Tidak boleh dibiakkan — memerlukan kuah nutrien dan keadaan BSL-2.",
       zh: "无法扩繁 — 需要营养肉汤与 BSL-2 条件。"
+    },
+    safety_warning: {
+      ms: 'Patogen oportunis manusia (BSL-2). Guna produk berdaftar sahaja — jangan sekali-kali membiak atau menghasilkannya sendiri. Siraman tanah sahaja — jangan sembur pada daun atau tanaman makanan, dan jangan guna pada sayur berdaun yang dimakan mentah. Pakai sarung tangan dan pelindung mata; tutup luka terlebih dahulu. Orang yang lemah imun, berpenyakit paru-paru (cth. fibrosis sista) atau mempunyai luka terbuka tidak patut mengendalikannya. Jumpa doktor jika luka atau mata menjadi merah atau bengkak selepas penggunaan.',
+      zh: '人类机会性病原菌(BSL-2)。只使用已登记产品 — 切勿自行培养或扩繁。仅限土壤灌根 — 切勿喷洒在叶面或食用作物上,也不可用于生吃的叶菜。请戴手套和护目镜,先包好伤口。免疫力低下、患肺病(如囊性纤维化)或有开放性伤口者不应接触。使用后如伤口或眼睛红肿,请就医。'
     }
   
   },
@@ -22336,7 +22340,7 @@ function buildRecItem(r, i, parsedProblems, collapseAll) {
     + "</div>"
     + "<div class='rec-reasoning'>" + reasoningHtml + "</div>"
     + (r.microbe.safety_warning
-      ? "<div style='margin-top:8px; padding:10px 12px; background:#fee2e2; border:1.5px solid #fca5a5; border-radius:6px; font-size:12px; color:#991b1b; line-height:1.5'><strong>" + t('advisor.rec.safety') + "</strong> " + r.microbe.safety_warning + "</div>"
+      ? "<div style='margin-top:8px; padding:10px 12px; background:#fee2e2; border:1.5px solid #fca5a5; border-radius:6px; font-size:12px; color:#991b1b; line-height:1.5'><strong>" + t('advisor.rec.safety') + "</strong> " + getMicrobeField(r.microbe, 'safety_warning') + "</div>"
       : "")
     + "<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;margin-top:8px'>"
     + sortedApps.slice(0,2).map(function(a){
