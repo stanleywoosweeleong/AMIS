@@ -10145,6 +10145,9 @@ const SCORE_DESC_I18N = {
   'Bacillus velezensis: proven on rubber red root (G. pseudoferreum), unproven on G. boninense':
     { ms: 'Bacillus velezensis: terbukti pada penyakit akar merah getah (G. pseudoferreum), belum terbukti pada G. boninense',
       zh: '贝莱斯芽孢杆菌 (Bacillus velezensis):对橡胶红根病 (G. pseudoferreum) 有效,对博宁灵芝 (G. boninense) 尚未证实' },
+  'Bacillus amyloliquefaciens: greenhouse only — EB13 cut BSR disease index from 4.0 to 1.8; no field trial':
+    { ms: 'Bacillus amyloliquefaciens: rumah hijau sahaja — EB13 menurunkan indeks penyakit BSR daripada 4.0 kepada 1.8; tiada percubaan ladang',
+      zh: '解淀粉芽孢杆菌 (Bacillus amyloliquefaciens):仅有温室数据 — EB13 使茎基腐病情指数由 4.0 降至 1.8;无田间试验' },
   '+Oil Palm: combine P. aeruginosa + AMF, or Trichoderma + AMF + EFB compost — combinations beat single microbes against Ganoderma':
     { ms: '+Kelapa Sawit: gabungkan P. aeruginosa + AMF, atau Trichoderma + AMF + kompos TKS — gabungan lebih berkesan daripada mikrob tunggal terhadap Ganoderma',
       zh: '+油棕:P. aeruginosa + AMF,或 木霉 + AMF + 空果串堆肥 组合使用 — 组合比单一微生物更能对抗灵芝属 (Ganoderma)' },
@@ -10664,6 +10667,7 @@ function offlineEngine(text, preParsed) {
       score(6, 16, "Bacillus subtilis: with AMF lowered BSR in oil palm seedlings");
       score(31, 16, "Streptomyces griseus: genus-level evidence only — other Streptomyces cut BSR up to 73% in glasshouse");
       score(8, 12, "Bacillus velezensis: proven on rubber red root (G. pseudoferreum), unproven on G. boninense");
+      score(7, 10, "Bacillus amyloliquefaciens: greenhouse only — EB13 cut BSR disease index from 4.0 to 1.8; no field trial");
     } else {
       // White root rot (Rigidoporus), red root, VSD, tree dieback.
       score(1, 30, "Trichoderma harzianum: classical antagonist of Ganoderma & Rigidoporus");
