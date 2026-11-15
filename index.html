@@ -10121,6 +10121,36 @@ const SCORE_DESC_I18N = {
   'Trichoderma longibrachiatum: nematode suppression + heat tolerance':
     { ms: 'Trichoderma longibrachiatum: penindasan nematod + toleransi haba',
       zh: '长枝木霉 (Trichoderma longibrachiatum):抑制线虫 + 耐热' },
+  'Trichoderma harzianum: most-studied Ganoderma antagonist — prevention & early infection only, does not cure established BSR':
+    { ms: 'Trichoderma harzianum: antagonis Ganoderma paling banyak dikaji — pencegahan & jangkitan awal sahaja, tidak menyembuhkan BSR yang sudah teruk',
+      zh: '哈茨木霉 (Trichoderma harzianum):研究最多的灵芝属 (Ganoderma) 拮抗菌 — 仅用于预防及早期感染,不能治愈已发病的茎基腐' },
+  'Trichoderma asperellum: local isolates cut BSR 42–58% in oil palm seedlings':
+    { ms: 'Trichoderma asperellum: isolat tempatan mengurangkan BSR 42–58% pada anak benih kelapa sawit',
+      zh: '棘孢木霉 (Trichoderma asperellum):本地菌株使油棕幼苗茎基腐减少 42–58%' },
+  'Trichoderma virens: part of the 3-species Trichoderma mix that cut BSR symptoms 83–89% in seedlings':
+    { ms: 'Trichoderma virens: sebahagian campuran 3 spesies Trichoderma yang mengurangkan simptom BSR 83–89% pada anak benih',
+      zh: '绿木霉 (Trichoderma virens):三种木霉混剂之一,使幼苗茎基腐症状减少 83–89%' },
+  'Pseudomonas aeruginosa: with AMF cut BSR 80% in a field trial — best field result; soil drench only, biosafety caution':
+    { ms: 'Pseudomonas aeruginosa: bersama AMF mengurangkan BSR 80% dalam percubaan ladang — keputusan ladang terbaik; siraman tanah sahaja, berhati-hati keselamatan biologi',
+      zh: '铜绿假单胞菌 (Pseudomonas aeruginosa):与 AMF 合用在田间试验中使茎基腐减少 80% — 最佳田间结果;仅限土壤灌根,注意生物安全' },
+  'Glomus intraradices: AMF partner in the best BSR field result (with P. aeruginosa)':
+    { ms: 'Glomus intraradices: rakan AMF dalam keputusan ladang BSR terbaik (bersama P. aeruginosa)',
+      zh: '根内球囊霉 (Glomus intraradices):茎基腐最佳田间结果中的 AMF 搭档(与 P. aeruginosa 合用)' },
+  'Bacillus subtilis: with AMF lowered BSR in oil palm seedlings':
+    { ms: 'Bacillus subtilis: bersama AMF mengurangkan BSR pada anak benih kelapa sawit',
+      zh: '枯草芽孢杆菌 (Bacillus subtilis):与 AMF 合用降低油棕幼苗茎基腐' },
+  'Streptomyces griseus: genus-level evidence only — other Streptomyces cut BSR up to 73% in glasshouse':
+    { ms: 'Streptomyces griseus: bukti peringkat genus sahaja — Streptomyces lain mengurangkan BSR sehingga 73% di rumah kaca',
+      zh: '灰色链霉菌 (Streptomyces griseus):仅有属级证据 — 其他链霉菌在温室中使茎基腐减少达 73%' },
+  'Bacillus velezensis: proven on rubber red root (G. pseudoferreum), unproven on G. boninense':
+    { ms: 'Bacillus velezensis: terbukti pada penyakit akar merah getah (G. pseudoferreum), belum terbukti pada G. boninense',
+      zh: '贝莱斯芽孢杆菌 (Bacillus velezensis):对橡胶红根病 (G. pseudoferreum) 有效,对博宁灵芝 (G. boninense) 尚未证实' },
+  '+Oil Palm: combine P. aeruginosa + AMF, or Trichoderma + AMF + EFB compost — combinations beat single microbes against Ganoderma':
+    { ms: '+Kelapa Sawit: gabungkan P. aeruginosa + AMF, atau Trichoderma + AMF + kompos TKS — gabungan lebih berkesan daripada mikrob tunggal terhadap Ganoderma',
+      zh: '+油棕:P. aeruginosa + AMF,或 木霉 + AMF + 空果串堆肥 组合使用 — 组合比单一微生物更能对抗灵芝属 (Ganoderma)' },
+  '+Coconut: AMF + Trichoderma combination for Ganoderma prevention':
+    { ms: '+Kelapa: gabungan AMF + Trichoderma untuk pencegahan Ganoderma',
+      zh: '+椰子:AMF + 木霉组合预防灵芝属 (Ganoderma)' },
 };
 
 // Translates a reasoning line that may contain multiple "; " separated
@@ -10248,7 +10278,7 @@ const ZH_QUERY_TERMS = [
   ['缺磷', ' phosphorus deficiency '], ['缺钾', ' potassium deficiency '], ['叶缘焦枯', ' leaf scorch '],
   ['缺镁', ' magnesium deficiency '], ['缺铁', ' iron deficiency '], ['缺硫', ' sulphur deficiency '], ['缺氮', ' yellowing '],
   ['裂果', ' fruit cracking '], ['日灼', ' sunscald '], ['落花', ' flower blast '], ['花穗', ' panicle '],
-  ['病毒', ' virus '], ['灵芝', ' ganoderma '], ['红根病', ' red root '], ['白根病', ' white root '],
+  ['病毒', ' virus '], ['茎基腐', ' basal stem rot '], ['灵芝', ' ganoderma '], ['红根病', ' red root '], ['白根病', ' white root '],
   ['盐害', ' salinity '], ['盐碱', ' salinity '],
   ['移栽', ' transplant '], ['育苗', ' nursery '], ['幼苗', ' seedling '], ['土壤健康', ' soil health '], ['改良土壤', ' improve soil '],
   // ── Environment / severity ──
@@ -10411,7 +10441,7 @@ function offlineEngine(text, preParsed) {
   if (t.match(/sunburn|sunscald|sun scald|terbakar matahari|leaf scorch heat/)) parsed.problem.push("sunscald");
   if (t.match(/panicle|panicle blight|inflorescence|flower blast|bunga gugur|kembang gugur|flowering issue/)) parsed.problem.push("panicle_blight");
   if (t.match(/bunchy top|bunchy|stunted clump|banana virus|banana streak|virus|viral|jangkitan virus/)) parsed.problem.push("viral_disease");
-  if (t.match(/white root|ganoderma|red root|root disease cocoa|tree dieback|cocoa dieback|vsd|vascular streak/)) parsed.problem.push("tree_root_disease");
+  if (t.match(/white root|ganoderma|basal stem rot|upper stem rot|\bbsr\b|reput pangkal batang|red root|root disease cocoa|tree dieback|cocoa dieback|vsd|vascular streak/)) parsed.problem.push("tree_root_disease");
   if (t.match(/salinity|salty soil|brackish|tanah masin|na toxicity|sodium/)) parsed.problem.push("salinity_stress");
 
   // No symptom survived negation and the farmer described the crop as
@@ -10612,12 +10642,36 @@ function offlineEngine(text, preParsed) {
     score(40, 15, "Isaria fumosorosea: vector control (whitefly, thrips)");
   }
   if (parsed.problem.includes("tree_root_disease")) {
-    // Ganoderma, white root rot, VSD — tough customers.
-    score(1, 30, "Trichoderma harzianum: classical antagonist of Ganoderma & Rigidoporus");
-    score(3, 28, "Trichoderma asperellum: broad tree-root pathogen suppression + ISR");
-    score(31, 25, "Streptomyces griseus: antibiosis against soilborne tree pathogens");
-    score(8, 22, "Bacillus velezensis: strong lipopeptide producer for soil pathogens");
-    score(77, 20, "Pythium oligandrum: mycoparasite, useful in mixed root-rot complexes");
+    // Ganoderma basal stem rot (BSR) of oil palm / coconut gets its own
+    // evidence-based ranking (literature search Nov 2026; see the Ganoderma
+    // BSR Manager app's Evidence tab for sources):
+    //  - best FIELD result: P. aeruginosa UPMP3 + AMF, 80% less BSR in a
+    //    bait-seedling field trial (Sundram et al. 2015)
+    //  - Trichoderma mix (harzianum + asperellum + virens): 83–89% fewer
+    //    symptoms in seedlings (JOPR 2018); protects at EARLY infection only
+    //  - Streptomyces evidence is from S. palmae / AGA347, not S. griseus
+    //  - B. velezensis proven only on G. pseudoferreum (rubber red root)
+    //  - Pythium oligandrum: no Ganoderma study found → not ranked here
+    // No microbe cures an established BSR palm — reasons say so.
+    const ganodermaCase = /ganoderma|basal stem rot|upper stem rot|\bbsr\b|reput pangkal batang/.test(t) ||
+      parsed.crop === "palm" || parsed.crop === "coconut";
+    if (ganodermaCase) {
+      score(1, 30, "Trichoderma harzianum: most-studied Ganoderma antagonist — prevention & early infection only, does not cure established BSR");
+      score(3, 28, "Trichoderma asperellum: local isolates cut BSR 42–58% in oil palm seedlings");
+      score(79, 26, "Trichoderma virens: part of the 3-species Trichoderma mix that cut BSR symptoms 83–89% in seedlings");
+      score(30, 26, "Pseudomonas aeruginosa: with AMF cut BSR 80% in a field trial — best field result; soil drench only, biosafety caution");
+      score(26, 24, "Glomus intraradices: AMF partner in the best BSR field result (with P. aeruginosa)");
+      score(6, 16, "Bacillus subtilis: with AMF lowered BSR in oil palm seedlings");
+      score(31, 16, "Streptomyces griseus: genus-level evidence only — other Streptomyces cut BSR up to 73% in glasshouse");
+      score(8, 12, "Bacillus velezensis: proven on rubber red root (G. pseudoferreum), unproven on G. boninense");
+    } else {
+      // White root rot (Rigidoporus), red root, VSD, tree dieback.
+      score(1, 30, "Trichoderma harzianum: classical antagonist of Ganoderma & Rigidoporus");
+      score(3, 28, "Trichoderma asperellum: broad tree-root pathogen suppression + ISR");
+      score(31, 25, "Streptomyces griseus: antibiosis against soilborne tree pathogens");
+      score(8, 22, "Bacillus velezensis: strong lipopeptide producer for soil pathogens");
+      score(77, 20, "Pythium oligandrum: mycoparasite, useful in mixed root-rot complexes");
+    }
   }
   if (parsed.problem.includes("salinity_stress")) {
     score(9, 30, "Bacillus pumilus: salt-tolerant PGPR, ACC-deaminase reduces ethylene");
@@ -10649,6 +10703,7 @@ function offlineEngine(text, preParsed) {
     score(26, 12, "+Oil Palm: AMF critical for oil palm nursery establishment");
     score(51, 12, "+Oil Palm: Bti for fungus gnats in nursery trays");
     score(1, 10, "+Oil Palm: T. harzianum for Ganoderma basal stem rot prevention");
+    score(30, 8, "+Oil Palm: combine P. aeruginosa + AMF, or Trichoderma + AMF + EFB compost — combinations beat single microbes against Ganoderma");
   }
   if (parsed.crop === "rubber") {
     score(1, 18, "+Rubber: T. harzianum — white root disease (Rigidoporus) suppression");
@@ -10748,6 +10803,7 @@ function offlineEngine(text, preParsed) {
     score(39, 20, "+Coconut: Metarhizium anisopliae — Oryctes rhinoceros (rhinoceros beetle) #1 pest");
     score(38, 15, "+Coconut: Beauveria bassiana — red palm weevil (Rhynchophorus)");
     score(1, 12, "+Coconut: T. harzianum — Ganoderma basal stem rot prevention");
+    score(26, 6, "+Coconut: AMF + Trichoderma combination for Ganoderma prevention");
     score(26, 10, "+Coconut: AMF for coconut establishment and drought tolerance");
   }
   if (parsed.crop === "groundnut") {
@@ -27526,7 +27582,7 @@ const FARMER_RECIPES = [
       ['QC check:', 'White mycelium first, then bright green/blue-green conidia = ready ✅. Black patches = Aspergillus contamination ❌ discard batch.'],
       ['Dry:', 'Shade-dry (NOT sun) until low moisture. Fan helps.'],
       ['Storage:', 'Paper bag in cool dark place. Use within 2 months.'],
-      ['Use rate:', '200–500g per planting hole. Mix with compost as carrier.']
+      ['Use rate:', '200–500g per planting hole. Mix with compost as carrier. For oil palm (Ganoderma), EFB (empty fruit bunch) compost is a proven carrier.']
     ]
   },
   {
@@ -27799,7 +27855,7 @@ const FARMER_RECIPES_I18N = {
         ['Semakan QC:', 'Miselium putih dahulu, kemudian konidia hijau terang/hijau-biru = sedia ✅. Tampalan hitam = pencemaran Aspergillus ❌ buang kelompok.'],
         ['Keringkan:', 'Keringkan dalam teduh (BUKAN matahari) sehingga kelembapan rendah. Kipas membantu.'],
         ['Penyimpanan:', 'Beg kertas di tempat sejuk dan gelap. Guna dalam 2 bulan.'],
-        ['Kadar penggunaan:', '200–500g setiap lubang tanaman. Campurkan dengan kompos sebagai pembawa.']
+        ['Kadar penggunaan:', '200–500g setiap lubang tanaman. Campurkan dengan kompos sebagai pembawa. Untuk kelapa sawit (Ganoderma), kompos TKS (tandan kosong sawit) ialah pembawa yang terbukti.']
       ]
     },
     zh: {
@@ -27815,7 +27871,7 @@ const FARMER_RECIPES_I18N = {
         ['QC 检查:', '先出现白色菌丝,接着出现亮绿色 / 蓝绿色分生孢子 = 完成 ✅。黑色斑块 = 被 Aspergillus 污染 ❌,整批丢弃。'],
         ['干燥:', '阴干(切勿日晒)至水分含量低。可用风扇辅助。'],
         ['储存:', '装入纸袋,放阴凉避光处。2 个月内使用完。'],
-        ['用量:', '每个种植穴 200–500g。与堆肥混合作为载体。']
+        ['用量:', '每个种植穴 200–500g。与堆肥混合作为载体。油棕(灵芝病)可用空果串 (EFB) 堆肥作为已验证的载体。']
       ]
     }
   },
