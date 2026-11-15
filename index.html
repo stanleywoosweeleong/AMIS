@@ -30670,5 +30670,66 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
   </script>
 
+
+<script>
+/* ── Scientific names in italics ──────────────────────────────────────
+   Genus and species names are italicised wherever they appear in the
+   page (cards, advisor reasons, notes, translated text), following the
+   naming convention. Strain codes, "sp./spp.", common names and orders
+   stay upright. Works on text nodes only, so data and exports are not
+   touched; inputs, drop-down options, SVG and existing <i>/<em> are
+   skipped. A MutationObserver handles content rendered later. */
+(function () {
+  var GENERA = ["Gluconacetobacter", "Chryseobacterium", "Stenotrophomonas", "Rhodopseudomonas", "Purpureocillium", "Phyllobacterium", "Micromonospora", "Herbaspirillum", "Bradyrhizobium", "Colletotrichum", "Mesorhizobium", "Gluconobacter", "Lactobacillus", "Saccharomyces", "Lecanicillium", "Scutellospora", "Lasiodiplodia", "Paenibacillus", "Rhynchophorus", "Sinorhizobium", "Sphingomonas", "Clonostachys", "Azospirillum", "Streptomyces", "Phytophthora", "Enterobacter", "Nitrosomonas", "Cellulomonas", "Arthrobacter", "Burkholderia", "Nitrobacter", "Metarhizium", "Rhizoctonia", "Rigidoporus", "Azotobacter", "Pseudomonas", "Sclerotinia", "Meloidogyne", "Trichoderma", "Rhodobacter", "Aspergillus", "Penicillium", "Mortierella", "Variovorax", "Helopeltis", "Radopholus", "Hirsutella", "Lysobacter", "Klebsiella", "Ralstonia", "Gigaspora", "Ganoderma", "Beauveria", "Corticium", "Rhizobium", "Cytophaga", "Nocardia", "Pochonia", "Yarrowia", "Serratia", "Botrytis", "Fusarium", "Bacillus", "Anabaena", "Frankia", "Oryctes", "Candida", "Pythium", "Azolla", "Metisa", "Nostoc", "Glomus", "Isaria"];
+  var EPITHETS = ["amyloliquefaciens", "gloeosporioides", "longibrachiatum", "diazotrophicus", "glucanolyticus", "chlamydosporia", "brassicacearum", "leguminosarum", "pseudoferreum", "thuringiensis", "licheniformis", "rhossiliensis", "viridosporus", "paucimobilis", "sclerotiorum", "winogradskyi", "salmonicolor", "hutchinsonii", "solanacearum", "intraradices", "seropedicae", "sphaeroides", "globiformis", "maltophilia", "fumosorosea", "fluorescens", "acidophilus", "chroococcum", "ferrugineus", "enzymogenes", "israelensis", "indologenes", "vinelandii", "microporus", "tropicalis", "atroviride", "marcescens", "anisopliae", "brasilense", "lipolytica", "megaterium", "velezensis", "asteroides", "theobromae", "cerevisiae", "rhinoceros", "aeruginosa", "oligandrum", "asperellum", "margarita", "oxysporum", "coagulans", "plantarum", "harzianum", "palmivora", "japonicum", "paradoxus", "cinnamomi", "calospora", "lilacinum", "lipoferum", "palustris", "incognita", "variicola", "boninense", "subtilis", "elongata", "polymyxa", "europaea", "meliloti", "bassiana", "lignosus", "pumilus", "bilaiae", "oxydans", "similis", "lecanii", "cloacae", "capsici", "lydicus", "cepacia", "awamori", "azollae", "cinerea", "griseus", "mosseae", "cubense", "cereus", "solani", "virens", "viride", "putida", "alpina", "ciceri", "elgii", "niger", "rosea", "plana", "fimi", "alni"];
+  var EPI = '(?:' + EPITHETS.join('|') + ')';
+  var RE = new RegExp('\\b(?:(?:' + GENERA.join('|') + ')(?: ' + EPI + '\\b){0,2}|[A-Z]\\. ?' + EPI + '\\b(?: ' + EPI + '\\b)?)', 'g');
+  var SKIP = 'i,em,script,style,textarea,input,select,option,title,code,pre,noscript,svg,[contenteditable],.no-sci';
+  function wrapTextNode(node) {
+    var text = node.nodeValue;
+    RE.lastIndex = 0;
+    if (!RE.test(text)) return;
+    var parent = node.parentElement;
+    if (!parent || parent.closest(SKIP)) return;
+    RE.lastIndex = 0;
+    var frag = document.createDocumentFragment(), last = 0, m;
+    while ((m = RE.exec(text))) {
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var i = document.createElement('i');
+      i.className = 'sci';
+      i.textContent = m[0];
+      frag.appendChild(i);
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    parent.replaceChild(frag, node);
+  }
+  function scan(root) {
+    if (!root) return;
+    if (root.nodeType === 3) { wrapTextNode(root); return; }
+    if (root.nodeType !== 1 || root.closest(SKIP)) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), list = [], n;
+    while ((n = walker.nextNode())) list.push(n);
+    list.forEach(wrapTextNode);
+  }
+  window.amisItalicizeSci = scan;   // for tests / manual use
+  var pending = [], queued = false;
+  function flush() {
+    queued = false;
+    var batch = pending; pending = [];
+    batch.forEach(function (n) { if (n.isConnected) scan(n); });
+  }
+  try {
+    scan(document.body);
+    new MutationObserver(function (records) {
+      records.forEach(function (r) {
+        if (r.type === 'characterData') pending.push(r.target);
+        else r.addedNodes.forEach(function (n) { pending.push(n); });
+      });
+      if (!queued && pending.length) { queued = true; requestAnimationFrame(flush); }
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  } catch (e) { /* never break the app over styling */ }
+})();
+</script>
 </body>
 </html>
